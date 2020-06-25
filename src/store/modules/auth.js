@@ -4,8 +4,8 @@ export default {
     user: null,
   },
   mutations:{
-    [SET_USER](state, user){
-      state.user = user
+    [SET_USER](state, payload){
+      state.user = payload
     }
   },
   actions:{

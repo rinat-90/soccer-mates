@@ -4,20 +4,19 @@
       <v-toolbar-title>Soccer mates</v-toolbar-title>
       <v-spacer></v-spacer>
     </v-app-bar>
-
     <v-content>
-      <HelloWorld/>
+      <v-container>
+        <router-view />
+      </v-container>
     </v-content>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
   },
 
   data: () => ({

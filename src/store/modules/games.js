@@ -6,8 +6,8 @@ export default {
     games: [],
   },
   mutations:{
-    [SET_GAMES](state, games){
-      state.user = games
+    [SET_GAMES](state, payload){
+      state.games = payload
     }
   },
   actions:{
