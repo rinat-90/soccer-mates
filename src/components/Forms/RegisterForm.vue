@@ -10,7 +10,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapGetters } from 'vuex';
   export default {
     name: "RegisterForm",
     data(){
@@ -50,12 +50,11 @@
       ...mapGetters(['error', 'loading'])
     },
     methods: {
-      ...mapActions(['register']),
       async register() {
         if(this.$refs.form.validate()){
           const { confirmedPassword, ...userData } = this.newUser;
           console.log(userData)
-          await this.register(userData);
+          await this.$store.dispatch('register',userData);
           await this.$router.push('/signin')
         }
       }

@@ -8,13 +8,13 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Home',
+    name: 'All games',
     component: Home,
     meta: { layout: 'main', auth: true },
   },
   {
     path: '/signin',
-    name: 'Sign-In',
+    name: 'Sign in',
     meta: { layout: 'empty' },
     component: () => import('../views/SignIn.vue')
   },
@@ -32,13 +32,13 @@ const routes = [
   },
   {
     path: '/game/:id',
-    name: 'Game',
+    name: 'Game details',
     meta: { layout: 'main', auth: true },
     component: () => import('../views/GameDetails.vue')
   },
   {
     path: '/create-game',
-    name: 'Create-Game',
+    name: 'Create Game',
     meta: { layout: 'main', auth: true },
     component: () => import('../views/CreateGame.vue')
   },

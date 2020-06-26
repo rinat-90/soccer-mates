@@ -3,7 +3,7 @@
     <v-col
       sm="12" md="6" lg="6" cols="12"
       v-for="game in games" :key="game.title">
-      <app-card :game="game" />
+      <app-card :game="game" :type="'short'" />
     </v-col>
   </v-row>
 </template>
@@ -12,21 +12,8 @@
   import AppCard from "./AppCard";
   export default {
     name: "AppGamesList",
+    props:['games'],
     components:{ AppCard },
-    // data(){
-    //   return{
-    //     games: [
-    //       { id: 1, title: 'Monday Pickup Game', skill: 'All Skill Level', date:'06/03, 12pm', spots: 12 },
-    //       { id: 2, title: 'Friday Pickup Game', skill: 'All Skill Level', date:'06/03, 12pm', spots: 12 },
-    //       { id: 3, title: 'Synday Pickup Game', skill: 'All Skill Level', date:'06/03, 12pm', spots: 12 },
-    //     ]
-    //   }
-    // }
-    computed:{
-      games(){
-        return this.$store.getters.games
-      }
-    }
   }
 </script>
 

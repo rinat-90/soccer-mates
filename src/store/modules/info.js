@@ -1,24 +1,30 @@
 import firebase from 'firebase/app';
+import {CLEAR_ERROR, CLEAR_INFO, SET_ERROR, SET_INFO, SET_LOADING} from "../types";
 export default {
   state:{
     info: {},
   },
   mutations:{
-    SET_INFO(state, info){
+    [SET_INFO](state, info){
       state.info = info
     },
-    CLEAR_INFO(state){
+    [CLEAR_INFO](state){
       state.info = {};
     }
   },
   actions:{
     async fetchInfo({ commit, dispatch }){
       try {
+        commit(CLEAR_ERROR);
+        commit(SET_LOADING, true);
         const uid = await dispatch('getUid');
         const info = (await firebase.database().ref(`/users/${uid}/info`).once('value')).val();
-        commit('SET_INFO', info)
+        info.userId = uid;
+        commit(SET_INFO, info);
+        commit(SET_LOADING, false);
       }catch (error) {
-        commit('SET_ERROR', error)
+        commit(SET_LOADING, false);
+        commit(SET_ERROR, error)
         throw error
       }
     },

@@ -8,6 +8,10 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 
+import AppLoader from "./components/AppLoader";
+
+Vue.component('app-loader', AppLoader);
+
 Vue.config.productionTip = false;
 
 firebase.initializeApp({
