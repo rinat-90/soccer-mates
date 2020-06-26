@@ -1,0 +1,19 @@
+{
+  "game": {
+    "title": "Monday Pickup Soccer",
+    "creatorId": "ndbfhewkdmwedkemw",
+    "spots": 12,
+    "skillLevel": "All skill level",
+    "going": ["userID", "userID", "userID"],
+    "status": "Past",
+    "location": "Lane Tech High School",
+    "date": "06/03/2020, 12pm"
+  },
+
+  "user": {
+    "id": "dsjdsjjds",
+    "displayName": "Joe Doe",
+    "email": "doe@gmail.com",
+    "games": ["gameID", "gameID", "gameID"]
+  }
+}

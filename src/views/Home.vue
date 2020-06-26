@@ -1,24 +1,15 @@
 <template>
-  <v-layout row wrap>
-    <v-flex sm12 md6>
-      <v-card>
-        meetup card
-      </v-card>
-    </v-flex>
-    <v-flex sm12 md6>
-      <v-card>
-        meetup card
-      </v-card>
-    </v-flex>
-  </v-layout>
+  <v-row>
+    <app-games-list />
+  </v-row>
 </template>
 
 <script>
-// @ is an alias to /src
-
-export default {
-  name: 'Home',
-  components: {
+  import AppGamesList from "../components/AppGamesList";
+  export default {
+    name: 'Home',
+    components: {
+      AppGamesList
+    }
   }
-}
 </script>

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import auth from './modules/auth'
+import info from './modules/info'
 import games from './modules/games'
 import players from './modules/players'
 import { CLEAR_ERROR, SET_ERROR, SET_LOADING } from "./types";
@@ -26,8 +27,17 @@ export default new Vuex.Store({
   },
   actions: {
   },
+  getters:{
+    error(state){
+      return state.error
+    },
+    loading(state){
+      return state.loading
+    }
+  },
   modules: {
     auth,
+    info,
     games,
     players
   }

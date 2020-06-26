@@ -1,26 +1,27 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
-      <v-toolbar-title>Soccer mates</v-toolbar-title>
-      <v-spacer></v-spacer>
-    </v-app-bar>
     <v-content>
-      <v-container>
+      <component :is="layout">
         <router-view />
-      </v-container>
+      </component>
     </v-content>
   </v-app>
 </template>
 
 <script>
+import MainLayout from "./layouts/Main";
+import EmptyLayout from "./layouts/Empty";
 
 export default {
   name: 'App',
-  components: {
-  },
-
+  components: { MainLayout, EmptyLayout },
   data: () => ({
     //
-  })
+  }),
+  computed: {
+    layout() {
+      return (this.$route.meta.layout || 'empty') + '-layout'
+    }
+  }
 }
 </script>

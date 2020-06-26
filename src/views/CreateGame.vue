@@ -1,10 +1,19 @@
 <template>
-  <div>Create game</div>
+  <v-card>
+    <v-card-title>
+      <div class="display-1  mx-auto">New Game Event</div>
+    </v-card-title>
+    <v-card-text>
+      <create-game-form />
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>
+  import CreateGameForm from "../components/Forms/CreateGameForm";
   export default {
-    name: "CreateGame"
+    name: "CreateGame",
+    components: { CreateGameForm}
   }
 </script>
 
