@@ -7,7 +7,7 @@
       {{ $route.name}}
     </v-toolbar-title>
     <v-spacer></v-spacer>
-    <v-btn v-if="$route.path !== '/'" class="hidden-md-and-up" text @click="$router.go(-1)">
+    <v-btn v-if="$route.path !== '/'" class="hidden-md-and-up" text @click="$router.push('/')">
       <v-icon>mdi-chevron-left</v-icon>
       <span>Back</span>
     </v-btn>
@@ -85,6 +85,7 @@
         links: [
           { title: 'Games', path: '/', icon: 'mdi-soccer'},
           { title: 'Create Game', path: '/create-game', icon: 'mdi-plus' },
+          { title: 'Players', path: '/players', icon: 'mdi-account-group' },
           { title: 'Profile', path: '/profile', icon: 'mdi-account' },
         ]
       }

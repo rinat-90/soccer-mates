@@ -2,8 +2,16 @@
   <v-form v-model="valid" ref="form">
     <v-text-field v-model="user.email" label="Email" :rules="rules.email"></v-text-field>
     <v-text-field v-model="user.password" type="password" label="Password" :rules="rules.password"></v-text-field>
-    <v-btn :loading="loading" :disabled="!valid" color="primary" @click="signIn">Sign In</v-btn>
-    <div class="mt-4 text-center">Don't have an account? <router-link to="/register">Register</router-link> </div>
+    <div class="d-flex">
+      <v-btn :loading="loading" :disabled="!valid" color="primary" @click="signIn">Sign In</v-btn>
+      <v-spacer></v-spacer>
+      <v-btn icon color="primary">
+        <v-icon>mdi-google</v-icon>
+      </v-btn>
+      <v-btn icon color="primary">
+        <v-icon>mdi-facebook</v-icon>
+      </v-btn>
+    </div>
   </v-form>
 </template>
 

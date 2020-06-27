@@ -18,8 +18,8 @@ export default {
         commit(CLEAR_ERROR);
         commit(SET_LOADING, true);
         const uid = await dispatch('getUid');
-        const info = (await firebase.database().ref(`/users/${uid}/info`).once('value')).val();
-        info.userId = uid;
+        const res = (await firebase.database().ref(`/users/${uid}/info`).once('value')).val() || {};
+        const info = { ...res, userId: uid };
         commit(SET_INFO, info);
         commit(SET_LOADING, false);
       }catch (error) {

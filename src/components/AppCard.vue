@@ -4,14 +4,14 @@
       <v-avatar size="35" class="mr-2">
         <img :src="game.imgUrl" alt="John">
       </v-avatar>
-      <span>Joe Doe</span>
+      <span v-if="player">{{ player.displayName }}</span>
     </v-card-title>
     <v-img :src="game.imgUrl" height="200" />
     <v-card-title>
       {{ game.title }}
     </v-card-title>
     <v-card-subtitle v-if="game.spots">
-<!--      {{ spots }}-->
+      {{ spots }}
     </v-card-subtitle>
     <v-card-text>
       <div class="mb-1">
@@ -32,18 +32,31 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex';
   export default {
     name: "AppCard",
     props: ['game', 'type'],
     computed:{
-      // going(){
-      //   return !this.game.going.length  ? 0 : this.game.going.length
-      // },
-      // spots(){
-      //   //return ''
-      //   return this.going === 0 ? `${this.game.spots} spots left` : `${this.going } going, ${this.going - this.game.spots} left`
-      // }
+      ...mapGetters(['playerById']),
+      spots(){
+        return !this.game.going.length
+          ? `${this.game.spots} spots left`
+          : this.isFilled
+            ? `${this.game.spots} going, All spots filled`
+            : `${this.game.going.length } going,  ${(+this.game.spots - this.game.going.length )} spots left`
+      },
+      isFilled(){
+        return +this.game.spots - this.game.going.length === 0
+      },
+      player(){
+        return this.game.creatorId ? this.playerById(this.game.creatorId) : null
+      }
     },
+    async mounted() {
+      if(this.player == null){
+        await this.$store.dispatch('fetchPlayers')
+      }
+    }
   }
 </script>
 

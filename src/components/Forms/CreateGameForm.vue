@@ -8,7 +8,9 @@
     <v-select v-model="game.skillLevel" :items="skills" label="Skill Level"></v-select>
     <v-text-field v-model="game.imgUrl" label="Image" :rules="rules.imgUrl"></v-text-field>
     <v-textarea v-model="game.desc" label="Description" :rules="rules.desc"></v-textarea>
-    <v-btn color="primary" :disabled="!valid" :loading="loading" @click="createGame">Create</v-btn>
+    <v-btn v-if="type === 'edit'" color="primary" :disabled="!valid" :loading="loading" @click="createGame">Update</v-btn>
+    <v-btn class="ml-2" v-if="type === 'edit'" color="red" dark :loading="loading" @click="createGame">Cancel Event</v-btn>
+    <v-btn v-else color="primary" :disabled="!valid" :loading="loading" @click="createGame">Create</v-btn>
   </v-form>
 </template>
 
@@ -16,6 +18,7 @@
   import { mapGetters } from 'vuex';
   export default {
     name: "CreateGameForm",
+    props: ['type'],
     data(){
       return{
         valid: false,
@@ -54,7 +57,7 @@
       }
     },
     computed:{
-      ...mapGetters(['error', 'loading'])
+      ...mapGetters(['error', 'loading', 'gameById'])
     },
     methods:{
       async createGame(){
@@ -63,6 +66,11 @@
           await this.$refs.form.reset();
           await this.$router.push(`/game/${key}`);
         }
+      }
+    },
+    mounted() {
+      if(this.type === 'edit'){
+        this.game = this.gameById(this.$route.params.id)
       }
     }
   }

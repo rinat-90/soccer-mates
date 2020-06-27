@@ -37,7 +37,7 @@ export default {
         const res = await firebase.database()
           .ref(`/games`)
           .push(gameData);
-        commit(ADD_GAME, gameData);
+        commit(ADD_GAME, {gameData});
         commit(SET_LOADING, false);
         return res.key
       }catch (error) {
@@ -86,6 +86,9 @@ export default {
   getters:{
     games(state){
       return state.games
+    },
+    gameById: (state) => (id) => {
+      return state.games.find(g => g.id === id)
     }
   }
 }

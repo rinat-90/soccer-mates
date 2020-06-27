@@ -1,6 +1,6 @@
 <template>
-  <v-layout justify-center>
-    <v-card width="600">
+  <div class="d-flex justify-center" style="height: 100vh;">
+    <v-card width="450" class="align-self-center">
       <v-card-title>
         <div class="display-1 mx-auto">Register</div>
       </v-card-title>
@@ -8,7 +8,7 @@
         <register-form />
       </v-card-text>
     </v-card>
-  </v-layout>
+  </div>
 </template>
 
 <script>

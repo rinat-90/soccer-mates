@@ -47,10 +47,5 @@ export default {
       const user = firebase.auth().currentUser;
       return user ? user.uid : null
     }
-  },
-  getters:{
-    user(state){
-      return state.user
-    }
   }
 }
