@@ -3,7 +3,9 @@
     <v-card v-if="game">
       <v-img :src="game.imgUrl" :height=" width < 950 ? '200px' : '350px'" />
       <v-card-title>
-        {{ game.title }}
+        <div>{{ game.title }}</div>
+        <v-spacer></v-spacer>
+        <v-chip v-if="isCanceled" color="red" outlined>{{ game.status }}</v-chip>
       </v-card-title>
       <v-card-subtitle>
         {{ game.date }}, {{ game.time }}
@@ -54,16 +56,16 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn v-if="isCreator" color="primary" @click="dialog = !dialog">Edit</v-btn>
-        <v-btn v-if="!isGoing" :disabled="isFilled || isGoing" color="primary" @click="getSpot(game.id)">Join</v-btn>
-<!--        <v-btn v-else-if="isFilled"  color="primary" >Join</v-btn>-->
+        <v-btn v-if="isCreator" :disabled="isCanceled" color="primary" @click="dialog = !dialog">Edit</v-btn>
+        <v-btn v-if="!isGoing" :disabled="isFilled || isGoing || isCanceled" color="primary" @click="getSpot(game.id)">Join</v-btn>
         <v-btn v-else color="red" dark>Can't make it!</v-btn>
       </v-card-actions>
     </v-card>
     <app-loader v-else></app-loader>
     <app-dialog title="Edit Game" :dialog="dialog" @onClose="dialog = !dialog">
-      <CreateGameForm :type="'edit'" @onClose="dialog = !dialog"/>
+      <CreateGameForm :type="'edit'" @onClose="dialog = !dialog" @onInput="inputHandler"/>
     </app-dialog>
+    <app-snackbar :text="text" :type="'success'" :snackbar="snackbar" @onDismiss="snackbar = !snackbar" />
   </div>
 </template>
 
@@ -77,7 +79,9 @@
     components: { AppCard, AppDialog, CreateGameForm },
     data(){
       return{
-        dialog: false
+        dialog: false,
+        snackbar: false,
+        text: ''
       }
     },
     computed:{
@@ -106,6 +110,9 @@
       },
       isCreator(){
         return this.creator.id === this.info.userId
+      },
+      isCanceled(){
+        return this.game.status === 'canceled'
       }
     },
     async mounted() {
@@ -119,6 +126,18 @@
     methods:{
       async getSpot(id){
         await this.$store.dispatch('getSpot', id)
+      },
+      inputHandler(type){
+        if(type === 'update'){
+          this.dialog = !this.dialog;
+          this.text = 'Successfully updated';
+          this.snackbar = !this.snackbar
+        }
+        if(type === 'cancel-game'){
+          this.dialog = !this.dialog;
+          this.text = 'The game has been canceled successfully';
+          this.snackbar = !this.snackbar
+        }
       }
     }
   }

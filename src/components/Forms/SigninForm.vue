@@ -16,7 +16,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapGetters } from 'vuex';
   export default {
     name: "SigninForm",
     data(){
@@ -42,10 +42,8 @@
       ...mapGetters(['loading', 'error'])
     },
     methods:{
-      //...mapActions(['signIn']),
       async signIn(){
         if(this.$refs.form.validate()){
-          console.log(this.user)
           await this.$store.dispatch('signIn', this.user);
           await this.$router.push('/')
         }

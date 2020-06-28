@@ -9,7 +9,7 @@
     <v-text-field v-model="game.imgUrl" label="Image" :rules="rules.imgUrl"></v-text-field>
     <v-textarea v-model="game.desc" label="Description" :rules="rules.desc"></v-textarea>
     <v-btn v-if="type === 'edit'" color="primary" :disabled="!valid" :loading="loading" @click="updateGame">Update</v-btn>
-    <v-btn class="ml-2" v-if="type === 'edit'" color="red" dark :loading="loading" @click="createGame">Cancel Event</v-btn>
+    <v-btn class="ml-2" v-if="type === 'edit'" color="red" dark :loading="loading" @click="cancelGame">Cancel Event</v-btn>
     <v-btn v-else color="primary" :disabled="!valid" :loading="loading" @click="createGame">Create</v-btn>
   </v-form>
 </template>
@@ -70,9 +70,13 @@
       async updateGame(){
         if(this.$refs.form.validate()){
           await this.$store.dispatch('updateGame', this.game);
-          this.$emit('onClose')
+          this.$emit('onInput', 'update')
         }
 
+      },
+      async cancelGame(){
+        await this.$store.dispatch('cancelGame', this.game.id);
+        this.$emit('onInput', 'cancel-game')
       }
     },
     mounted() {

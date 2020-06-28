@@ -11,7 +11,12 @@
       {{ game.title }}
     </v-card-title>
     <v-card-subtitle v-if="game.spots">
-      {{ spots }}
+      <div class="d-flex">
+        <div>{{ spots }}</div>
+        <v-spacer></v-spacer>
+        <v-chip v-if="isCanceled" small outlined color="red">{{ game.status }}</v-chip>
+      </div>
+
     </v-card-subtitle>
     <v-card-text>
       <div class="mb-1">
@@ -50,6 +55,9 @@
       },
       player(){
         return this.game.creatorId ? this.playerById(this.game.creatorId) : null
+      },
+      isCanceled(){
+        return this.game.status === 'canceled'
       }
     },
     async mounted() {

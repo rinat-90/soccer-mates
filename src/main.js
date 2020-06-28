@@ -1,16 +1,19 @@
 import Vue from 'vue'
 import App from './App.vue'
+import router from './router'
+import store from './store'
+import vuetify from './plugins/vuetify'
+import './plugins/toast'
+import AppLoader from "./components/AppLoader";
+import AppSnackbar from "./components/AppSnackbar";
+
 import firebase from "firebase/app";
 import 'firebase/auth'
 import 'firebase/database'
 import './registerServiceWorker'
-import router from './router'
-import store from './store'
-import vuetify from './plugins/vuetify'
-
-import AppLoader from "./components/AppLoader";
 
 Vue.component('app-loader', AppLoader);
+Vue.component('app-snackbar', AppSnackbar);
 
 Vue.config.productionTip = false;
 

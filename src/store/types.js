@@ -6,3 +6,5 @@ export const SET_LOADING  = 'SET_LOADING';
 export const SET_ERROR    = 'SET_ERROR';
 export const CLEAR_ERROR  = 'SET_CLEAR';
 export const ADD_GAME     = 'ADD_GAME';
+export const CANCEL_GAME     = 'CANCEL_GAME';
+export const UPDATE_GAME     = 'UPDATE_GAME';

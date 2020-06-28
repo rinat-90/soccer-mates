@@ -1,5 +1,5 @@
 import firebase from 'firebase/app';
-import {ADD_GAME, CLEAR_ERROR, SET_ERROR, SET_GAMES, SET_LOADING} from "../types";
+import {ADD_GAME, CANCEL_GAME, CLEAR_ERROR, SET_ERROR, SET_GAMES, SET_LOADING, UPDATE_GAME} from "../types";
 export default {
   state:{
     games: [],
@@ -10,6 +10,23 @@ export default {
     },
     [ADD_GAME](state, payload){
       state.games.push(payload)
+    },
+    [UPDATE_GAME](state, payload){
+      const games = [...state.games];
+      const indx = games.findIndex(g => g.id === payload.id);
+      if(indx >= 0){
+        games[indx] = payload
+      }
+      state.games = games;
+    },
+    [CANCEL_GAME](state,id){
+      const games = [...state.games];
+      const indx = games.findIndex(g => g.id === id);
+      if(indx >= 0){
+        games[indx].status = 'canceled'
+      }
+      state.games = games;
+
     },
     GET_SPOT(state, {id, uid }){
       const games = [...state.games];
@@ -82,14 +99,12 @@ export default {
         throw error
       }
     },
-    async updateGame ({ commit, dispatch }, game ){
+    async updateGame ({ commit}, game ){
       try {
         commit(CLEAR_ERROR);
         commit(SET_LOADING, true);
-        const uid = await dispatch('getUid');
-        const updated = await firebase.database().ref(`/games`).child(game.id).update(game);
-        console.log(updated);
-
+        await firebase.database().ref(`/games`).child(game.id).update(game);
+        commit(UPDATE_GAME, game);
         commit(SET_LOADING, false);
       }catch (error) {
         commit(SET_LOADING, false);
@@ -97,6 +112,19 @@ export default {
         throw error
       }
     },
+    async cancelGame({commit}, id){
+      try {
+        commit(CLEAR_ERROR);
+        commit(SET_LOADING, true);
+        const updated = await firebase.database().ref(`/games`).child(id).update({status: 'canceled'});
+        commit(CANCEL_GAME,id);
+        commit(SET_LOADING, false);
+      }catch (error) {
+        commit(SET_LOADING, false);
+        commit(SET_ERROR, error);
+        throw error
+      }
+    }
   },
   getters:{
     games(state){

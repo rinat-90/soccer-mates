@@ -13,22 +13,14 @@
   </div>
 </template>
 <script>
+  import { mapGetters } from 'vuex';
   import SigninForm from "../components/Forms/SigninForm";
+  import messages from "../utils/messages";
   export default {
     name: 'SignIn',
     components: { SigninForm },
-    computed:{
-      user(){
-        return this.$store.getters.user
-      }
-    },
-    watch:{
-      user(val){
-        if(val){
-          this.$router.push('/')
-        }
-      }
-    }
+
+
 
   }
 </script>
