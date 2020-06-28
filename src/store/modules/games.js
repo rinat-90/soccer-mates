@@ -81,7 +81,22 @@ export default {
         commit(SET_ERROR, error);
         throw error
       }
-    }
+    },
+    async updateGame ({ commit, dispatch }, game ){
+      try {
+        commit(CLEAR_ERROR);
+        commit(SET_LOADING, true);
+        const uid = await dispatch('getUid');
+        const updated = await firebase.database().ref(`/games`).child(game.id).update(game);
+        console.log(updated);
+
+        commit(SET_LOADING, false);
+      }catch (error) {
+        commit(SET_LOADING, false);
+        commit(SET_ERROR, error);
+        throw error
+      }
+    },
   },
   getters:{
     games(state){

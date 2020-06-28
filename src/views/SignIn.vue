@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex justify-center" style="height: 100vh">
-    <v-card width="450" class="align-self-center" style="opacity: 0.95;">
+    <v-card width="450" class="align-self-center" style="opacity: 0.8;">
       <v-card-title>
         <div class="display-1 mx-auto">Sign In</div>
       </v-card-title>

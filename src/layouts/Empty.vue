@@ -27,7 +27,7 @@
     height: 100vh;
     top: 0;
     left: 0;
-    background-image: url('../assets/bg.jpg');
+    background-image: url('../assets/bg4.jpg');
     background-position: center center;
     background-size: cover;
 

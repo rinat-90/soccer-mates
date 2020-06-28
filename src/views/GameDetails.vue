@@ -62,7 +62,7 @@
     </v-card>
     <app-loader v-else></app-loader>
     <app-dialog title="Edit Game" :dialog="dialog" @onClose="dialog = !dialog">
-      <CreateGameForm :type="'edit'" />
+      <CreateGameForm :type="'edit'" @onClose="dialog = !dialog"/>
     </app-dialog>
   </div>
 </template>
@@ -105,7 +105,7 @@
         return +this.game.spots - this.game.going.length === 0
       },
       isCreator(){
-        return !!this.creator
+        return this.creator.id === this.info.userId
       }
     },
     async mounted() {
