@@ -1,14 +1,6 @@
 import firebase from 'firebase/app';
-import {CLEAR_ERROR, SET_ERROR, SET_LOADING, SET_USER} from '../types'
+import {CLEAR_ERROR, SET_ERROR, SET_LOADING, CLEAR_INFO} from '../types'
 export default {
-  state:{
-    user: null,
-  },
-  mutations:{
-    [SET_USER](state, payload){
-      state.user = payload
-    }
-  },
   actions:{
     async register({ commit, dispatch }, { email, password, displayName }){
       try{
@@ -42,6 +34,7 @@ export default {
     },
     async signOut({ commit }){
       await firebase.auth().signOut();
+      commit(CLEAR_INFO);
     },
     getUid(){
       const user = firebase.auth().currentUser;

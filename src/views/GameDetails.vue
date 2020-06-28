@@ -58,7 +58,7 @@
         <v-spacer></v-spacer>
         <v-btn v-if="isCreator" :disabled="isCanceled" color="primary" @click="dialog = !dialog">Edit</v-btn>
         <v-btn v-if="!isGoing" :disabled="isFilled || isGoing || isCanceled" color="primary" @click="getSpot(game.id)">Join</v-btn>
-        <v-btn v-else color="red" dark>Can't make it!</v-btn>
+        <v-btn v-else color="orange lighten-2" dark>Can't make it</v-btn>
       </v-card-actions>
     </v-card>
     <app-loader v-else></app-loader>
