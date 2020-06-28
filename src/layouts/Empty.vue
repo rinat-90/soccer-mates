@@ -7,7 +7,7 @@
 
     <app-snackbar
       :snackbar="snackbar"
-      :text="errorMsg"
+      :text="text"
       :type="'error'"
       @onDismiss="snackbar = !snackbar" />
   </div>
@@ -20,18 +20,18 @@
     name: "Empty",
     data(){
       return{
-        snackbar: false
+        snackbar: false,
+        text: ''
       }
     },
     computed:{
       ...mapGetters(['error']),
-      errorMsg(){
-        return messages[this.error.code]
-      }
+
     },
     watch:{
       error(val){
         if(val){
+          this.text = messages[this.error.code];
           this.snackbar = true
         }
       }

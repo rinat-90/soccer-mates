@@ -38,7 +38,7 @@
     },
     computed:{
       snackbarColor(){
-        return this.type === 'success' ? 'primary' : 'red lighten-3'
+        return this.type === 'success' ? 'primary lighten-3' : 'red lighten-3'
       }
     }
   }
