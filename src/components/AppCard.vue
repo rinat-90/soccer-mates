@@ -2,7 +2,7 @@
   <v-card :to="`/game/${game.id}`">
     <v-card-title class="py-2">
       <v-avatar size="35" class="mr-2 white--text" color="primary">
-        <img v-if="creator.imgUrl" :src="creator.imgUrl" alt="John">
+        <img v-if="creator.imgUrl !== ''" :src="creator.imgUrl" alt="John">
         <span v-else >{{ initials }}</span>
       </v-avatar>
       <span v-if="creator" style="font-size: 18px;">{{ creator.displayName }}</span>

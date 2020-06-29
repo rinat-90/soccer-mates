@@ -10,7 +10,8 @@ export default {
         const uid = await dispatch('getUid');
         await firebase.database().ref(`/users/${uid}/info`).set({
           email,
-          displayName
+          displayName,
+          imgUrl: ''
         });
         commit(SET_LOADING, false);
       }catch (error) {

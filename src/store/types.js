@@ -8,3 +8,4 @@ export const CLEAR_ERROR  = 'SET_CLEAR';
 export const ADD_GAME     = 'ADD_GAME';
 export const CANCEL_GAME     = 'CANCEL_GAME';
 export const UPDATE_GAME     = 'UPDATE_GAME';
+export const UPLOAD_INFO_PHOTO     = 'UPLOAD_INFO_PHOTO';

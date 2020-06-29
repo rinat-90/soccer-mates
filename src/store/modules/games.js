@@ -59,8 +59,6 @@ export default {
         const ext = filename.slice(filename.lastIndexOf('.'));
         const file = await firebase.storage().ref(`/games/${res.key}${ext}`).put(game.image);
         const url = await file.ref.getDownloadURL();
-        console.log(url)
-        console.log(file)
         await firebase.database().ref('/games').child(res.key).update({imgUrl: url});
 
         commit(ADD_GAME, {gameData});
