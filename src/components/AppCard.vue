@@ -1,10 +1,11 @@
 <template>
   <v-card :to="`/game/${game.id}`">
-    <v-card-title>
-      <v-avatar size="35" class="mr-2">
-        <img :src="game.imgUrl" alt="John">
+    <v-card-title class="py-2">
+      <v-avatar size="35" class="mr-2 white--text" color="primary">
+        <img v-if="creator.imgUrl" :src="creator.imgUrl" alt="John">
+        <span v-else >{{ initials }}</span>
       </v-avatar>
-      <span v-if="player">{{ player.displayName }}</span>
+      <span v-if="creator" style="font-size: 18px;">{{ creator.displayName }}</span>
     </v-card-title>
     <v-img :src="game.imgUrl" height="200" />
     <v-card-title>
@@ -53,15 +54,24 @@
       isFilled(){
         return +this.game.spots - this.game.going.length === 0
       },
-      player(){
+      creator(){
         return this.game.creatorId ? this.playerById(this.game.creatorId) : null
+      },
+      initials(){
+        const names = this.creator ? this.creator.displayName.split(' ') : this.creator.displayName;
+        let initials = '';
+        if(names.length > 1){
+          return `${names[0].charAt(0).toUpperCase()}${names[1].charAt(0).toUpperCase()}`
+        }else{
+          return`${names[0].charAt(0).toUpperCase()}`
+        }
       },
       isCanceled(){
         return this.game.status === 'canceled'
       }
     },
     async mounted() {
-      if(this.player == null){
+      if(this.creator == null){
         await this.$store.dispatch('fetchPlayers')
       }
     }

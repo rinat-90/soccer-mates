@@ -27,7 +27,7 @@
         <v-divider class="mt-3"></v-divider>
         <div class="mt-3">
           <b class="text-capitalize">Event Organizer</b><br>
-          <span style="color: green" v-if="creator">{{ creator.displayName }}</span>
+          <span style="color: green" v-if="creator.displayName">{{ creator.displayName }}</span>
         </div>
         <v-divider class="mt-3"></v-divider>
         <div class="mt-3">
@@ -46,7 +46,7 @@
               v-for="item in game.going" :key="item"
               :color="info.userId === item ? 'primary': ''"
               class="mr-2">
-              {{ info.userId === item ? 'You' : playerById(item)['displayName'] }}
+              {{ playerById(item)['displayName']  }}
             </v-chip>
           </div>
           <div class="mt-2 pl-3" v-else>

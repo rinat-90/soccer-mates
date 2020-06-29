@@ -54,6 +54,15 @@ export default {
         const res = await firebase.database()
           .ref(`/games`)
           .push(gameData);
+
+        const filename = game.image.name;
+        const ext = filename.slice(filename.lastIndexOf('.'));
+        const file = await firebase.storage().ref(`/games/${res.key}${ext}`).put(game.image);
+        const url = await file.ref.getDownloadURL();
+        console.log(url)
+        console.log(file)
+        await firebase.database().ref('/games').child(res.key).update({imgUrl: url});
+
         commit(ADD_GAME, {gameData});
         commit(SET_LOADING, false);
         return res.key
@@ -69,7 +78,6 @@ export default {
         commit(SET_LOADING, true);
         const rowGames = (await firebase.database().ref(`/games`).once('value') ).val() || {};
         const games = Object.keys(rowGames).map(key => {
-          console.log(rowGames[key]['going']);
           if(rowGames[key]['going']){
             rowGames[key]['going'] = Object.values(rowGames[key]['going']);
            return  { ...rowGames[key], id: key }

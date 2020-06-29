@@ -6,8 +6,15 @@
     <v-text-field v-model="game.time" type="time" label="Time" :rules="rules.time"></v-text-field>
     <v-text-field v-model="game.spots" label="Spots" :rules="rules.spots"></v-text-field>
     <v-select v-model="game.skillLevel" :items="skills" label="Skill Level"></v-select>
-    <v-text-field v-model="game.imgUrl" label="Image" :rules="rules.imgUrl"></v-text-field>
+    <v-text-field readonly @click="onPickFile" v-model="game.imgUrl" label="Image" :rules="rules.imgUrl"></v-text-field>
+    <input
+      @change="onFilePicked"
+      ref="fileInput"
+      accept="image/*"
+      type="file"
+      style="display: none" />
     <v-textarea v-model="game.desc" label="Description" :rules="rules.desc"></v-textarea>
+
     <v-btn v-if="type === 'edit'" color="primary" :disabled="!valid" :loading="loading" @click="updateGame">Update</v-btn>
     <v-btn class="ml-2" v-if="type === 'edit'" color="red" dark :loading="loading" @click="cancelGame">Cancel Event</v-btn>
     <v-btn v-else color="primary" :disabled="!valid" :loading="loading" @click="createGame">Create</v-btn>
@@ -77,6 +84,23 @@
       async cancelGame(){
         await this.$store.dispatch('cancelGame', this.game.id);
         this.$emit('onInput', 'cancel-game')
+      },
+      onPickFile(){
+        this.$refs.fileInput.click()
+      },
+      onFilePicked(e){
+        const files = e.target.files;
+        const fileName = files[0].name;
+        //console.log(files[0]);
+        if(fileName.lastIndexOf('.') <= 0){
+          return alert('Please add proper file')
+        }
+        const fileReader = new FileReader();
+        fileReader.addEventListener('load', () => {
+          this.game.imgUrl = fileReader.result
+        });
+        fileReader.readAsDataURL(files[0])
+        this.game.image = files[0]
       }
     },
     mounted() {
