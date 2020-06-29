@@ -1,6 +1,6 @@
 <template>
   <div>
-    <app-games-list v-if="games.length" :games="games" />
+    <app-games-list v-if="games.length" :games="games" :creator-title="true" />
     <app-loader v-else />
   </div>
 </template>

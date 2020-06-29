@@ -46,7 +46,7 @@ export default {
       try{
         commit(CLEAR_ERROR);
         commit(SET_LOADING, true);
-        const uid =  await dispatch('getUid')
+        const uid =  await dispatch('getUid');
         const filename = payload.name;
         const ext = filename.slice(filename.lastIndexOf('.'));
         const file = await firebase.storage().ref(`/users/${uid}${ext}`).put(payload);

@@ -1,6 +1,6 @@
 <template>
   <v-card :to="`/game/${game.id}`">
-    <v-card-title class="py-2">
+    <v-card-title class="py-2" v-if="creatorTitle">
       <v-avatar size="35" class="mr-2 white--text" color="primary">
         <img v-if="creator.imgUrl !== ''" :src="creator.imgUrl" alt="John">
         <span v-else >{{ initials }}</span>
@@ -41,7 +41,7 @@
   import { mapGetters } from 'vuex';
   export default {
     name: "AppCard",
-    props: ['game', 'type'],
+    props: ['game', 'type', 'creatorTitle'],
     computed:{
       ...mapGetters(['playerById']),
       spots(){

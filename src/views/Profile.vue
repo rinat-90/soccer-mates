@@ -39,7 +39,19 @@
               color="basil"
               flat
             >
-              <v-card-text>{{ text }}</v-card-text>
+              <v-card-text>
+                <div v-if="item === 'Organized Games'">
+                  <div v-if="createdGames.length">
+                    <app-games-list :games="createdGames" :creator-title="false" />
+                  </div>
+                  <div v-else>No games yet</div>
+                </div>
+                <div v-else>
+                  <div v-if="createdGames.length">
+                    <app-games-list :games="goingGames" :creator-title="false" />
+                  </div>
+                </div>
+              </v-card-text>
             </v-card>
           </v-tab-item>
         </v-tabs-items>
@@ -50,18 +62,39 @@
 
 <script>
   import { mapGetters } from 'vuex';
+  import AppGamesList from "../components/AppGamesList";
   export default {
     name: "Profile",
+    components:{ AppGamesList },
     data () {
       return {
         imgUrl: '',
         tab: null,
-        items: ['Attending Games', 'Organized Games', 'History'],
+        items: ['Attending Games', 'Organized Games'],
         text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
       }
     },
+    async mounted(){
+      if(!this.games.length){
+        await this.$store.dispatch('fetchGames')
+      }
+    },
     computed:{
-      ...mapGetters(['loading', 'error', 'playerById', 'info'])
+      ...mapGetters(['loading', 'error', 'playerById', 'info', 'games']),
+      createdGames(){
+        return this.games.length ? this.games.filter(g => g.creatorId === this.info.userId) : []
+      },
+      goingGames(){
+        const games = [];
+        this.games.forEach(g => {
+          g.going.forEach(item => {
+            if(item === this.info.userId){
+              games.push(g)
+            }
+          })
+        });
+        return games
+      }
     },
     methods:{
       onPickFile(){

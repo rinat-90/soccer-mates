@@ -3,7 +3,7 @@
     <v-col
       sm="12" md="6" lg="4" cols="12"
       v-for="game in games" :key="game.id">
-      <app-card v-if="game" :game="game" :type="'short'" />
+      <app-card v-if="game" :game="game" :type="'short'" :creator-title="creatorTitle" />
     </v-col>
   </v-row>
 </template>
@@ -12,7 +12,7 @@
   import AppCard from "./AppCard";
   export default {
     name: "AppGamesList",
-    props:['games'],
+    props:['games', 'creatorTitle'],
     components:{ AppCard },
   }
 </script>
