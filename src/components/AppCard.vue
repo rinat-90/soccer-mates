@@ -45,14 +45,17 @@
     computed:{
       ...mapGetters(['playerById']),
       spots(){
-        return !this.game.going.length
+        return !this.goingPlayers.length
           ? `${this.game.spots} spots left`
           : this.isFilled
             ? `${this.game.spots} going, All spots filled`
-            : `${this.game.going.length } going,  ${(+this.game.spots - this.game.going.length )} spots left`
+            : `${this.goingPlayers.length } going,  ${(+this.game.spots - this.goingPlayers.length )} spots left`
+      },
+      goingPlayers(){
+        return Object.values(this.game.going)
       },
       isFilled(){
-        return +this.game.spots - this.game.going.length === 0
+        return +this.game.spots - this.goingPlayers.length === 0
       },
       creator(){
         return this.game.creatorId ? this.playerById(this.game.creatorId) : null

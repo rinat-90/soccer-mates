@@ -41,9 +41,9 @@
             <v-spacer></v-spacer>
             <span>{{ spots }}</span>
           </div>
-          <div class="mt-2" v-if="game.going.length">
+          <div class="mt-2" v-if="goingPlayers.length">
             <v-chip
-              v-for="item in game.going" :key="item"
+              v-for="item in goingPlayers" :key="item"
               :color="info.userId === item ? 'primary': ''"
               class="mr-2">
               {{ playerById(item)['displayName']  }}
@@ -57,8 +57,8 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn v-if="isCreator" :disabled="isCanceled" color="primary" @click="dialog = !dialog">Edit</v-btn>
-        <v-btn v-if="!isGoing" :disabled="isFilled || isGoing || isCanceled" color="primary" @click="getSpot(game.id)">Join</v-btn>
-        <v-btn v-else color="orange lighten-2" dark>Can't make it</v-btn>
+        <v-btn v-if="!isGoing" :disabled="isFilled || isGoing || isCanceled" color="primary" @click="join(game.id)">Join</v-btn>
+        <v-btn v-else color="orange lighten-2" dark @click="unjoin(game.id)">Unjoin</v-btn>
       </v-card-actions>
     </v-card>
     <app-loader v-else></app-loader>
@@ -96,17 +96,20 @@
         return this.game.creatorId ? this.playerById(this.game.creatorId) : null
       },
       spots(){
-        return !this.game.going.length
+        return !this.goingPlayers.length
           ? `${this.game.spots} spots left`
           : this.isFilled
             ? `${this.game.spots} going, All spots filled`
-            : `${this.game.going.length } going,  ${(+this.game.spots - this.game.going.length )} spots left`
+            : `${this.goingPlayers.length } going,  ${(+this.game.spots - this.goingPlayers.length )} spots left`
+      },
+      goingPlayers(){
+        return Object.values(this.game.going)
       },
       isGoing(){
-        return this.game.going ? this.game.going.find(g => g === this.info.userId) : false
+        return this.goingPlayers ? this.goingPlayers.find(g => g === this.info.userId) : false
       },
       isFilled(){
-        return +this.game.spots - this.game.going.length === 0
+        return +this.game.spots - this.goingPlayers.length === 0
       },
       isCreator(){
         return this.creator.id === this.info.userId
@@ -119,13 +122,21 @@
       if(this.game == null){
         await this.$store.dispatch('fetchGames')
       }
-      if(this.player == null){
+      if(this.creator == null){
         await this.$store.dispatch('fetchPlayers')
       }
     },
     methods:{
-      async getSpot(id){
-        await this.$store.dispatch('getSpot', id)
+      async unjoin(id){
+        for (const key in this.game.going){
+          if(this.game.going[key] === this.info.userId){
+            await this.$store.dispatch('unjoin', {gameId: id, key: key })
+          }
+        }
+
+      },
+      async join(id){
+        await this.$store.dispatch('join', id)
       },
       inputHandler(type){
         if(type === 'update'){

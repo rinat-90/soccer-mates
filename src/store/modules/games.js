@@ -1,5 +1,15 @@
 import firebase from 'firebase/app';
-import {ADD_GAME, CANCEL_GAME, CLEAR_ERROR, SET_ERROR, SET_GAMES, SET_LOADING, UPDATE_GAME} from "../types";
+import {
+  ADD_GAME,
+  CANCEL_GAME,
+  CLEAR_ERROR,
+  JOIN_GAME,
+  SET_ERROR,
+  SET_GAMES,
+  SET_LOADING,
+  UNJOIN_GAME,
+  UPDATE_GAME
+} from "../types";
 export default {
   state:{
     games: [],
@@ -28,11 +38,23 @@ export default {
       state.games = games;
 
     },
-    GET_SPOT(state, {id, uid }){
+    [UNJOIN_GAME](state, { key, gameId }){
+      const games = [...state.games];
+      const index = games.findIndex(g => g.id === gameId );
+      if(index >= 0){
+        for (let k in games[index].going){
+          if(k === key){
+            delete games[index].going[k]
+          }
+        }
+      }
+      state.games = games
+    },
+    [JOIN_GAME](state, {id, uid, key }){
       const games = [...state.games];
       const index = games.findIndex(g => g.id === id);
       if(index >= 0){
-        games[index].going.push(uid)
+        games[index].going[key] = uid
       }
       state.games = games;
 
@@ -76,8 +98,10 @@ export default {
         commit(SET_LOADING, true);
         const rowGames = (await firebase.database().ref(`/games`).once('value') ).val() || {};
         const games = Object.keys(rowGames).map(key => {
+          console.log(rowGames[key]);
+          console.log(rowGames[key].going);
           if(rowGames[key]['going']){
-            rowGames[key]['going'] = Object.values(rowGames[key]['going']);
+            ///rowGames[key]['going'] = Object.values(rowGames[key]['going']);
            return  { ...rowGames[key], id: key }
           }else{
             return  { ...rowGames[key], id: key, going: [] }
@@ -91,19 +115,33 @@ export default {
         throw error
       }
     },
-    async getSpot({ commit, dispatch }, id){
+    async join({ commit, dispatch }, id){
       try {
         commit(CLEAR_ERROR);
         commit(SET_LOADING, true);
         const uid = await dispatch('getUid');
-        await firebase.database().ref(`/games/${id}/going`).push(uid);
-        commit('GET_SPOT',{ id, uid });
+        const res = await firebase.database().ref(`/games/${id}/going`).push(uid);
+        commit(JOIN_GAME,{ id, uid, key: res.key });
         commit(SET_LOADING, false);
       }catch (error) {
         commit(SET_LOADING, false);
         commit(SET_ERROR, error);
         throw error
       }
+    },
+    async unjoin({commit, dispatch }, {gameId, key}){
+      try{
+        commit(CLEAR_ERROR);
+        commit(SET_LOADING, true);
+        await firebase.database().ref('/games').child(gameId).child('going').child(key).remove();
+        commit(UNJOIN_GAME, {key, gameId });
+        commit(SET_LOADING, false);
+      }catch (error) {
+        commit(SET_LOADING, false);
+        commit(SET_ERROR, error);
+        throw error
+      }
+
     },
     async updateGame ({ commit}, game ){
       try {

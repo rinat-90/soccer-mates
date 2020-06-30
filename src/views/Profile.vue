@@ -87,11 +87,11 @@
       goingGames(){
         const games = [];
         this.games.forEach(g => {
-          g.going.forEach(item => {
-            if(item === this.info.userId){
+          for (let key in g.going){
+            if(g.going[key] === this.info.userId){
               games.push(g)
             }
-          })
+          }
         });
         return games
       }
