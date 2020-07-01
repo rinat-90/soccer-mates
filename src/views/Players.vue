@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>this is players page</div>
-    <pre>{{ players }}</pre>
+<!--    <pre>{{ players }}</pre>-->
   </div>
 </template>
 

@@ -3,10 +3,22 @@
     <v-card width="100%">
       <v-card-text>
         <div class="text-center mb-5">
-          <v-avatar color="primary darken-1" size="100" class="white--text" @click="onPickFile">
-            <img v-if="info.imgUrl" :src="info.imgUrl" alt="">
-            <span v-else>ADD</span>
-          </v-avatar>
+          <v-hover v-slot:default="{ hover }">
+            <v-avatar size="100" class="white--text" >
+              <app-loader v-if="loading" />
+              <v-img v-if="info.imgUrl && !loading" :src="info.imgUrl" alt="">
+                <v-expand-transition>
+                  <div
+                    v-if="hover"
+                    class="d-flex justify-center transition-fast-in-fast-out lighten-2  v-card--reveal  white--text"
+                    style="height: 100%; width: 100%; background: rgba(67, 160,72, 0.8);">
+                    <v-btn @click="onPickFile" small dark text class="align-self-center">Update</v-btn>
+                  </div>
+                </v-expand-transition>
+              </v-img>
+              <v-btn @click="onPickFile" text  v-if="!info.imgUrl && !loading" color="primary darken-1">add photo</v-btn>
+            </v-avatar>
+          </v-hover>
           <input
             @change="onFilePicked"
             ref="fileInput"
@@ -15,7 +27,19 @@
             style="display: none" />
           <div class="display-1 mt-2">{{ info.displayName }}</div>
           <p>{{ info.email }}</p>
+          <v-divider></v-divider>
+          <div class="mt-2 d-flex justify-center">
+            <div>
+              <span class="headline"><strong>{{ goingGames.length }}</strong></span><br>
+              <span>Attended</span>
+            </div>
+            <div class="ml-5">
+              <span class="headline"><strong>{{ createdGames.length }}</strong></span><br>
+              <span>Organized</span>
+            </div>
+          </div>
         </div>
+        <v-divider></v-divider>
         <v-tabs
           v-model="tab"
           background-color="transparent"
@@ -41,13 +65,15 @@
             >
               <v-card-text>
                 <div v-if="item === 'Organized Games'">
+                  <app-loader v-if="loading" />
                   <div v-if="createdGames.length">
                     <app-games-list :games="createdGames" :creator-title="false" />
                   </div>
                   <div v-else>No games yet</div>
                 </div>
                 <div v-else>
-                  <div v-if="createdGames.length">
+                  <app-loader v-if="loading" />
+                  <div v-if="goingGames.length">
                     <app-games-list :games="goingGames" :creator-title="false" />
                   </div>
                 </div>
@@ -71,7 +97,6 @@
         imgUrl: '',
         tab: null,
         items: ['Attending Games', 'Organized Games'],
-        text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
       }
     },
     async mounted(){
