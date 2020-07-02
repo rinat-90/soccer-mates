@@ -1,19 +1,44 @@
 <template>
   <v-form v-model="valid" ref="form">
     <v-text-field v-model="game.title" label="Title" :rules="rules.title"></v-text-field>
-    <v-text-field v-model="game.location" label="Location" :rules="rules.location"></v-text-field>
+    <vuetify-google-autocomplete
+      v-model="game.address"
+      ref="address"
+      id="map"
+      label="Address"
+      :rules="rules.address"
+      :placechanged="setPlace"
+    >
+    </vuetify-google-autocomplete>
     <v-text-field v-model="game.date" type="date" label="Date" :rules="rules.date"></v-text-field>
     <v-text-field v-model="game.time" type="time" label="Time" :rules="rules.time"></v-text-field>
-    <v-text-field v-model="game.spots" label="Spots" :rules="rules.spots"></v-text-field>
+    <v-text-field v-model="game.spots" type="number" label="Spots" :rules="rules.spots"></v-text-field>
     <v-select v-model="game.skillLevel" :items="skills" label="Skill Level"></v-select>
-    <v-text-field readonly @click="onPickFile" v-model="game.imgUrl" label="Image" :rules="rules.imgUrl"></v-text-field>
+<!--    <v-text-field readonly @click="onPickFile" v-model="game.imgUrl" label="Image" :rules="rules.imgUrl"></v-text-field>-->
     <input
       @change="onFilePicked"
       ref="fileInput"
       accept="image/*"
       type="file"
       style="display: none" />
-    <v-textarea v-model="game.desc" label="Description" :rules="rules.desc"></v-textarea>
+    <v-card color="primary lighten-4" flat class="d-flex justify-center mx-auto" max-width="500" height="180">
+      <div v-if="!game.imgUrl" class="align-self-center text-center">
+        <v-btn  @click="onPickFile" x-large icon color="primary" >
+          <v-icon>mdi-camera</v-icon>
+        </v-btn>
+        <p>Upload your image</p>
+      </div>
+      <v-img v-else :src="game.imgUrl" height="180"></v-img>
+    </v-card>
+    <v-subheader>Game description</v-subheader>
+    <tiptap-vuetify
+      v-model="game.desc"
+      placeholder="Tell more about game…"
+      :extensions="extensions"
+      class="mb-3"
+      :card-props="{flat: true}"
+      style="border-bottom: 1px solid #828282"
+    />
 
     <v-btn v-if="type === 'edit'" color="primary" :disabled="!valid" :loading="loading" @click="updateGame">Update</v-btn>
     <v-btn class="ml-2" v-if="type === 'edit'" color="red" dark :loading="loading" @click="cancelGame">Cancel Event</v-btn>
@@ -23,18 +48,48 @@
 
 <script>
   import { mapGetters } from 'vuex';
+  import moment from 'moment'
+  import { TiptapVuetify, Heading, Bold, Italic, Strike, Underline, Code, Paragraph, BulletList, OrderedList, ListItem, Link, Blockquote, HardBreak, HorizontalRule, History } from 'tiptap-vuetify'
   export default {
     name: "CreateGameForm",
     props: ['type'],
+    components: { TiptapVuetify },
     data(){
       return{
         valid: false,
-        skills: ['All Skills Level', 'Beginner', 'Intermidite', 'Advanced'],
+        skills: ['All skills level', 'Beginner', 'Intermediate', 'Advanced'],
+        extensions: [
+          History,
+          Blockquote,
+          Link,
+          Underline,
+          Strike,
+          Italic,
+          ListItem,
+          BulletList,
+          OrderedList,
+          [Heading, {
+            options: {
+              levels: [1, 2, 3]
+            }
+          }],
+          Bold,
+          Code,
+          HorizontalRule,
+          Paragraph,
+          HardBreak
+        ],
+        // starting editor's content
+        content: `
+          <h1>Yay Headlines!</h1>
+          <p>All these <strong>cool tags</strong> are working now.</p>
+        `,
         game:{
           title: '',
           location: '',
-          date: '',
-          time: '',
+          address: '',
+          date: moment().format('YYYY-MM-DD'),
+          time: null,
           desc: '',
           imgUrl: '',
           spots: 2,
@@ -45,7 +100,7 @@
             v => !!v || 'Title is required',
             v => (v && v.length <= 50) || 'Display name must be less than 30 characters'
           ],
-          location: [
+          address: [
             v => !!v || 'Location is required',
           ],
           desc: [
@@ -55,10 +110,11 @@
             v => !!v || 'Image Url is required',
           ],
           date: [
-            v => !!v || 'Date is required',
+            v => !!v || 'Pick a date',
+            v => v >= moment().format('YYYY-MM-DD') || 'Date must be valid'
           ],
           time: [
-            v => !!v || 'Time Url is required',
+            v => !!v || 'Pick a time',
           ],
         },
       }
@@ -68,7 +124,7 @@
     },
     methods:{
       async createGame(){
-        if(this.$refs.form.validate()){
+        if(this.$refs.form.validate() && this.game.desc !== ''){
           const key =  await this.$store.dispatch('createGame', this.game);
           await this.$refs.form.reset();
           await this.$router.push(`/game/${key}`);
@@ -84,6 +140,10 @@
       async cancelGame(){
         await this.$store.dispatch('cancelGame', this.game.id);
         this.$emit('onInput', 'cancel-game')
+      },
+      setPlace(addressData, placeResultData, id){
+        this.game.location = addressData;
+        console.log('address data', addressData)
       },
       onPickFile(){
         this.$refs.fileInput.click()
@@ -112,5 +172,14 @@
 </script>
 
 <style scoped>
+
+  .form-control {
+    border-radius: 0;
+    border-bottom: 1px solid #828282;
+    height: 40px;
+    width: 100%;
+    outline: none;
+    margin-bottom: 30px;
+  }
 
 </style>

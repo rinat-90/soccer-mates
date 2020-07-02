@@ -4,6 +4,9 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import './plugins/toast'
+import './plugins/gmap'
+import './plugins/vuetify-google-autocomplete'
+//import './plugins/tiptap-vuetify'
 import AppLoader from "./components/AppLoader";
 import AppSnackbar from "./components/AppSnackbar";
 

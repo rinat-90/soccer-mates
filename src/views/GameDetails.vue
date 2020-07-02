@@ -14,7 +14,7 @@
       <v-card-text>
         <div class="mb-1" style="color: green">
           <v-icon>mdi-map-marker</v-icon>
-          <span class="ml-2">{{ game.location }}</span>
+          <span class="ml-2">{{ game.address }}</span>
         </div>
         <div class="mb-1">
           <v-icon>mdi-clock-time-three-outline</v-icon>
@@ -32,7 +32,7 @@
         <v-divider class="mt-3"></v-divider>
         <div class="mt-3">
           <b class="text-capitalize">About the event</b><br>
-          <p>{{ game.desc }}</p>
+          <div v-html="game.desc" class="pa-3"></div>
         </div>
         <v-divider class="mt-3"></v-divider>
         <div class="mt-3">
@@ -45,7 +45,7 @@
             <v-chip
               v-for="item in goingPlayers" :key="item"
               :color="info.userId === item ? 'primary': ''"
-              class="mr-2">
+              class="mr-2 mb-2">
               {{ playerById(item)['displayName']  }}
             </v-chip>
           </div>
@@ -53,6 +53,14 @@
             <p>Roaster empty</p>
           </div>
         </div>
+        <GmapMap
+          ref="map"
+          class="map"
+          :zoom="11"
+          :center="{
+            lat: 41.881832,
+            lng: -87.623177,
+          }" />
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -157,5 +165,10 @@
 <style scoped>
   .text-capitalize{
     text-transform: uppercase;
+  }
+  .map{
+    width: 100%;
+    height: 200px;
+    padding-top: 50px;
   }
 </style>

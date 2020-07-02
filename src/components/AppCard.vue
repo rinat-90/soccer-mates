@@ -22,7 +22,7 @@
     <v-card-text>
       <div class="mb-1">
         <v-icon>mdi-map-marker</v-icon>
-        <span class="ml-2">{{ game.location }}</span>
+        <span class="ml-2">{{ game.address }}</span>
       </div>
       <div class="mb-1">
         <v-icon>mdi-clock-time-eleven-outline</v-icon>
