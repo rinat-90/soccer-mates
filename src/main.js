@@ -6,7 +6,7 @@ import vuetify from './plugins/vuetify'
 import './plugins/toast'
 import './plugins/gmap'
 import './plugins/vuetify-google-autocomplete'
-//import './plugins/tiptap-vuetify'
+import dateFilter from "./filters/dateFilter";
 import AppLoader from "./components/AppLoader";
 import AppSnackbar from "./components/AppSnackbar";
 
@@ -15,6 +15,7 @@ import 'firebase/auth'
 import 'firebase/database'
 import './registerServiceWorker'
 
+Vue.filter('date', dateFilter);
 Vue.component('app-loader', AppLoader);
 Vue.component('app-snackbar', AppSnackbar);
 

@@ -8,7 +8,7 @@
         <v-chip v-if="isCanceled" color="red" outlined>{{ game.status }}</v-chip>
       </v-card-title>
       <v-card-subtitle>
-        {{ game.date }}, {{ game.time }}
+        {{ game.date | date('date') }}
       </v-card-subtitle>
       <v-divider></v-divider>
       <v-card-text>
@@ -18,7 +18,7 @@
         </div>
         <div class="mb-1">
           <v-icon>mdi-clock-time-three-outline</v-icon>
-          <span class="ml-2">{{ game.time }}</span>
+          <span class="ml-2">{{getTime }}</span>
         </div>
         <div class="mb-1">
           <v-icon>mdi-cog</v-icon>
@@ -82,6 +82,7 @@
   import AppDialog from "../components/AppDialog";
   import CreateGameForm from "../components/Forms/CreateGameForm";
   import { mapGetters } from 'vuex';
+  import moment from 'moment';
   export default {
     name: "GameDetails",
     components: { AppCard, AppDialog, CreateGameForm },
@@ -94,6 +95,9 @@
     },
     computed:{
       ...mapGetters(['error', 'loading', 'games', 'info', 'gameById', 'playerById']),
+      getTime(){
+        return moment(this.game.time, 'h:mm').format('hh:mm A')
+      },
       width(){
         return window.innerWidth;
       },
@@ -114,7 +118,7 @@
         return Object.values(this.game.going)
       },
       isGoing(){
-        return this.goingPlayers ? this.goingPlayers.find(g => g === this.info.userId) : false
+        return this.goingPlayers.length ? this.goingPlayers.find(g => g === this.info.userId) : false
       },
       isFilled(){
         return +this.game.spots - this.goingPlayers.length === 0

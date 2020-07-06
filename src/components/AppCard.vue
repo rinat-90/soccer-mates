@@ -1,44 +1,48 @@
 <template>
-  <v-card :to="`/game/${game.id}`">
-    <v-card-title class="py-2" v-if="creatorTitle">
-      <v-avatar size="35" class="mr-2 white--text" color="primary">
-        <img v-if="creator.imgUrl !== ''" :src="creator.imgUrl" alt="John">
-        <span v-else >{{ initials }}</span>
-      </v-avatar>
-      <span v-if="creator" style="font-size: 18px;">{{ creator.displayName }}</span>
-    </v-card-title>
-    <v-img :src="game.imgUrl" height="200" />
-    <v-card-title>
-      {{ game.title }}
-    </v-card-title>
-    <v-card-subtitle v-if="game.spots">
-      <div class="d-flex">
-        <div>{{ spots }}</div>
-        <v-spacer></v-spacer>
-        <v-chip v-if="isCanceled" small outlined color="red">{{ game.status }}</v-chip>
-      </div>
+  <div>
+    <v-subheader>{{ game.date | date('date')}}</v-subheader>
+    <v-card :to="`/game/${game.id}`">
+      <v-card-title  class="py-2" v-if="creatorTitle">
+        <v-avatar size="35" class="mr-2 white--text" color="primary">
+          <img v-if="creator.imgUrl !== ''" :src="creator.imgUrl" alt="John">
+          <span v-else >{{ initials }}</span>
+        </v-avatar>
+        <span v-if="creator" style="font-size: 18px;">{{ creator.displayName }}</span>
+      </v-card-title>
+      <v-img :src="game.imgUrl" height="200" />
+      <v-card-title>
+        {{ game.title }}
+      </v-card-title>
+      <v-card-subtitle v-if="game.spots">
+        <div class="d-flex">
+          <div>{{ spots }}</div>
+          <v-spacer></v-spacer>
+          <v-chip v-if="isCanceled" small outlined color="red">{{ game.status }}</v-chip>
+        </div>
 
-    </v-card-subtitle>
-    <v-card-text>
-      <div class="mb-1">
-        <v-icon>mdi-map-marker</v-icon>
-        <span class="ml-2">{{ game.address }}</span>
-      </div>
-      <div class="mb-1">
-        <v-icon>mdi-clock-time-eleven-outline</v-icon>
-        <span class="ml-2">{{ game.date }}, {{ game.time}}</span>
-      </div>
-      <div>
-        <v-icon>mdi-cog</v-icon>
-        <span class="ml-2">{{ game.skillLevel }}</span>
-      </div>
-    </v-card-text>
+      </v-card-subtitle>
+      <v-card-text>
+        <div class="mb-1">
+          <v-icon>mdi-map-marker</v-icon>
+          <span class="ml-2">{{ game.address }}</span>
+        </div>
+        <div class="mb-1">
+          <v-icon>mdi-clock-time-eleven-outline</v-icon>
+          <span class="ml-2">{{ getTime }}</span>
+        </div>
+        <div>
+          <v-icon>mdi-cog</v-icon>
+          <span class="ml-2">{{ game.skillLevel }}</span>
+        </div>
+      </v-card-text>
 
-  </v-card>
+    </v-card>
+  </div>
 </template>
 
 <script>
   import { mapGetters } from 'vuex';
+  import moment from 'moment'
   export default {
     name: "AppCard",
     props: ['game', 'type', 'creatorTitle'],
@@ -50,6 +54,9 @@
           : this.isFilled
             ? `${this.game.spots} going, All spots filled`
             : `${this.goingPlayers.length } going,  ${(+this.game.spots - this.goingPlayers.length )} spots left`
+      },
+      getTime(){
+        return moment(this.game.time, 'h:mm').format('hh:mm A')
       },
       goingPlayers(){
         return Object.values(this.game.going)

@@ -49,7 +49,7 @@
 <script>
   import { mapGetters } from 'vuex';
   import moment from 'moment'
-  import { TiptapVuetify, Heading, Bold, Italic, Strike, Underline, Code, Paragraph, BulletList, OrderedList, ListItem, Link, Blockquote, HardBreak, HorizontalRule, History } from 'tiptap-vuetify'
+  import { TiptapVuetify, Heading, Bold, Italic, Underline, Paragraph, BulletList, OrderedList, ListItem, Link, HardBreak, HorizontalRule, History } from 'tiptap-vuetify'
   export default {
     name: "CreateGameForm",
     props: ['type'],
@@ -60,10 +60,8 @@
         skills: ['All skills level', 'Beginner', 'Intermediate', 'Advanced'],
         extensions: [
           History,
-          Blockquote,
           Link,
           Underline,
-          Strike,
           Italic,
           ListItem,
           BulletList,
@@ -74,7 +72,6 @@
             }
           }],
           Bold,
-          Code,
           HorizontalRule,
           Paragraph,
           HardBreak
