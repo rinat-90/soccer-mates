@@ -31,6 +31,12 @@ const routes = [
     component: () => import('../views/Players.vue')
   },
   {
+    path: '/players/:id',
+    name: 'Players',
+    meta: { layout: 'main', auth: true },
+    component: () => import('../views/Profile.vue')
+  },
+  {
     path: '/profile',
     name: 'Profile',
     meta: { layout: 'main', auth: true },
@@ -38,9 +44,9 @@ const routes = [
   },
   {
     path: '/game/:id',
-    name: 'Game details',
+    name: 'Game',
     meta: { layout: 'main', auth: true },
-    component: () => import('../views/GameDetails.vue')
+    component: () => import('../views/Game.vue')
   },
   {
     path: '/create-game',

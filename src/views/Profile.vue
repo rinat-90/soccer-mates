@@ -67,14 +67,14 @@
                 <div v-if="item === 'Organized Games'">
                   <app-loader v-if="loading" />
                   <div v-if="createdGames.length">
-                    <app-games-list :games="createdGames" :creator-title="false" />
+                    <app-games-list :games="createdGames" :type="'short'" />
                   </div>
                   <div v-else>No games yet</div>
                 </div>
                 <div v-else>
                   <app-loader v-if="loading" />
                   <div v-if="goingGames.length">
-                    <app-games-list :games="goingGames" :creator-title="false" />
+                    <app-games-list :games="goingGames" :type="'long'" />
                   </div>
                 </div>
               </v-card-text>

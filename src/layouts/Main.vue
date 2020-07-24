@@ -15,13 +15,12 @@
     name: "Main",
     components:{ AppNavigation },
     computed:{
-      ...mapGetters(['error', 'info']),
+      ...mapGetters(['error', 'info', 'loading']),
     },
     async mounted() {
       if(!Object.keys(this.info).length){
         await this.$store.dispatch('fetchInfo')
       }
-      this.loading = false
     }
   }
 </script>

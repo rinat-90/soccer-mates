@@ -98,8 +98,8 @@ export default {
         commit(SET_LOADING, true);
         const rowGames = (await firebase.database().ref(`/games`).once('value') ).val() || {};
         const games = Object.keys(rowGames).map(key => {
-          console.log(rowGames[key]);
-          console.log(rowGames[key].going);
+          // console.log(rowGames[key]);
+          // console.log(rowGames[key].going);
           if(rowGames[key]['going']){
             ///rowGames[key]['going'] = Object.values(rowGames[key]['going']);
            return  { ...rowGames[key], id: key }

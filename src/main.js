@@ -1,23 +1,30 @@
 import Vue from 'vue'
+import VueRx from 'vue-rx'
+import CompositionApi from '@vue/composition-api'
 import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import './plugins/toast'
-import './plugins/gmap'
+//import './plugins/gmap'
 import './plugins/vuetify-google-autocomplete'
 import dateFilter from "./filters/dateFilter";
 import AppLoader from "./components/AppLoader";
 import AppSnackbar from "./components/AppSnackbar";
+import AppCard from "./components/AppCard";
 
 import firebase from "firebase/app";
 import 'firebase/auth'
 import 'firebase/database'
 import './registerServiceWorker'
 
+Vue.use(VueRx);
+Vue.use(CompositionApi);
 Vue.filter('date', dateFilter);
 Vue.component('app-loader', AppLoader);
 Vue.component('app-snackbar', AppSnackbar);
+Vue.component('app-snackbar', AppSnackbar);
+Vue.component('app-card', AppCard);
 
 Vue.config.productionTip = false;
 

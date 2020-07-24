@@ -1,8 +1,7 @@
 <template>
   <div>
-    <app-games-list v-if="games.length" :games="sortedGames" :creator-title="true" />
+    <app-games-list v-if="sortedGames.length" :games="sortedGames" :type="'short'" />
     <app-loader v-else />
-
   </div>
 </template>
 
@@ -19,26 +18,22 @@
       ...mapGetters(['error', 'loading', 'games']),
       sortedGames(){
         return this.games.length
-          ? this.games.sort((a, b) => moment(a.date)  - moment(b.date))
-            .sort((a, b) => moment(a.time, 'h:mm').format('h:mm') - moment(b.time, 'h:mm').format('HH:mm'))
+          ? this.games
+            .sort((a,b) => moment(`${a.date}${a.time}`, 'YYYY-MM-DD h:mma') - moment(`${b.date}${b.time}`, 'YYYY-MM-DD h:mma'))
             .map(game => {
-              if(moment(game.date).format('YYYY-MM-DD') < moment().format('YYYY-MM-DD')){
-                game.status = 'finished'
-              }
-              if(moment(game.time, 'h:mm').format('hh:mm A') < moment().format('hh:mm A')){
-                game.status = 'finished'
+              if(moment(`${game.date}${game.time}`, 'YYYY-MM-DD h:mma') < moment(new Date(), 'YYYY-MM-DD h:mma')){
+                this.updateGame(game)
               }
               return game
-          }).filter(game => game.status !== 'finished')
+            }).filter(game => game.status !== 'finished')
           : []
-          // .map(g => {
-          //   if(moment(g.date).format('YYYY-MM-DD') < date){
-          //     g.status = 'finished'
-          //   }
-          //   return g
-          // })
       }
 
+    },
+    methods:{
+      async updateGame(game){
+        await this.$store.dispatch('updateGame', {id: game.id, status: 'finished'})
+      }
     },
     async mounted(){
       if(!this.games.length){
