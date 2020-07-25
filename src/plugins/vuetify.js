@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Vuetify, { VSnackbar, VBtn, VIcon, VTextField } from 'vuetify/lib';
+import Vuetify, { VSnackbar, VBtn, VIcon, VTextField } from 'vuetify/lib'
 import colors from 'vuetify/lib/util/colors'
 
 import { TiptapVuetifyPlugin } from 'tiptap-vuetify'
@@ -15,7 +15,7 @@ Vue.use(Vuetify, {
     VIcon,
     VTextField
   }
-});
+})
 
 const vuetify = new Vuetify({
   theme: {
@@ -33,6 +33,6 @@ Vue.use(TiptapVuetifyPlugin, {
   vuetify, // same as "vuetify: vuetify"
   // optional, default to 'md' (default vuetify icons before v2.0.0)
   iconsGroup: 'mdi'
-});
+})
 
-export default  vuetify;
+export default vuetify

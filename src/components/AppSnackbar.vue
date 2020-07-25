@@ -20,28 +20,28 @@
 </template>
 
 <script>
-  export default {
-    name: "AppSnackbar",
-    props: {
-      text:{
-        type: String,
-        required: true
-      },
-      type:{
-        type: String,
-        required: true
-      },
-      snackbar: {
-        type: Boolean,
-        required: true
-      }
+export default {
+  name: 'AppSnackbar',
+  props: {
+    text: {
+      type: String,
+      required: true
     },
-    computed:{
-      snackbarColor(){
-        return this.type === 'success' ? 'primary lighten-1' : 'red lighten-3'
-      }
+    type: {
+      type: String,
+      required: true
+    },
+    snackbar: {
+      type: Boolean,
+      required: true
+    }
+  },
+  computed: {
+    snackbarColor () {
+      return this.type === 'success' ? 'primary lighten-1' : 'red lighten-3'
     }
   }
+}
 </script>
 
 <style scoped>

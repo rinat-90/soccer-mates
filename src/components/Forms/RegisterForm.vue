@@ -10,56 +10,56 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
-  export default {
-    name: "RegisterForm",
-    data(){
-      return{
-        valid: false,
-        newUser:{
-          displayName: '',
-          email: '',
-          password: '',
-          confirmedPassword: ''
-        },
-        rules:{
-          displayName: [
-            v => !!v || 'Display name is required',
-            v => (v && v.length <= 30) || 'Display name must be less than 30 characters'
-          ],
-          email: [
-            v => !!v || 'E-mail is required',
-            v => /.+@.+/.test(v) || 'E-mail must be valid'
-          ],
-          password: [
-            v => !!v || 'Password is required',
-            v => (v && v.length >= 6) || 'Password must be at least 6 characters'
-          ],
-          confirmPassword: [
-            v => !!v || 'Password confirm is required',
-            v => (v && v === this.newUser.password) || 'Password does not match',
-            v => (v && v.length >= 6) || 'Password must be at least 6 characters'
-          ],
-          checkbox:[
-            v => !!v || 'You must agree to continue'
-          ]
-        },
+import { mapGetters } from 'vuex'
+export default {
+  name: 'RegisterForm',
+  data () {
+    return {
+      valid: false,
+      newUser: {
+        displayName: '',
+        email: '',
+        password: '',
+        confirmedPassword: ''
+      },
+      rules: {
+        displayName: [
+          v => !!v || 'Display name is required',
+          v => (v && v.length <= 30) || 'Display name must be less than 30 characters'
+        ],
+        email: [
+          v => !!v || 'E-mail is required',
+          v => /.+@.+/.test(v) || 'E-mail must be valid'
+        ],
+        password: [
+          v => !!v || 'Password is required',
+          v => (v && v.length >= 6) || 'Password must be at least 6 characters'
+        ],
+        confirmPassword: [
+          v => !!v || 'Password confirm is required',
+          v => (v && v === this.newUser.password) || 'Password does not match',
+          v => (v && v.length >= 6) || 'Password must be at least 6 characters'
+        ],
+        checkbox: [
+          v => !!v || 'You must agree to continue'
+        ]
       }
-    },
-    computed:{
-      ...mapGetters(['error', 'loading'])
-    },
-    methods: {
-      async register() {
-        if(this.$refs.form.validate()){
-          const { confirmedPassword, ...userData } = this.newUser;
-          console.log(userData)
-          await this.$store.dispatch('register',userData);
-          await this.$router.push('/signin')
-        }
+    }
+  },
+  computed: {
+    ...mapGetters(['error', 'loading'])
+  },
+  methods: {
+    async register () {
+      if (this.$refs.form.validate()) {
+        const { confirmedPassword, ...userData } = this.newUser
+        console.log(userData)
+        await this.$store.dispatch('register', userData)
+        await this.$router.push('/signin')
       }
     }
   }
+}
 </script>
 
 <style scoped>

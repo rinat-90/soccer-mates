@@ -8,20 +8,20 @@
   </v-card-title>
 </template>
 <script>
-  export default {
-    name: "CardOrganizer",
-    props:['name', 'imgUrl'],
-    computed:{
-      initials(){
-        const names = this.name ? this.name.split(' ') : this.name;
-        if(names.length > 1){
-          return `${names[0].charAt(0).toUpperCase()}${names[1].charAt(0).toUpperCase()}`
-        }else{
-          return`${names[0].charAt(0).toUpperCase()}`
-        }
-      },
+export default {
+  name: 'CardOrganizer',
+  props: ['name', 'imgUrl'],
+  computed: {
+    initials () {
+      const names = this.name ? this.name.split(' ') : this.name
+      if (names.length > 1) {
+        return `${names[0].charAt(0).toUpperCase()}${names[1].charAt(0).toUpperCase()}`
+      } else {
+        return `${names[0].charAt(0).toUpperCase()}`
+      }
     }
   }
+}
 </script>
 
 <style scoped>

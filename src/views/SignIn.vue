@@ -20,14 +20,15 @@
   </div>
 </template>
 <script>
-  import { mapGetters } from 'vuex';
-  import SigninForm from "../components/Forms/SigninForm";
-  import messages from "../utils/messages";
-  export default {
-    name: 'SignIn',
-    components: { SigninForm },
+import SigninForm from '../components/Forms/SigninForm'
+export default {
+  name: 'SignIn',
+  components: { SigninForm },
+  metaInfo () {
+    return {
+      title: this.$title('Sign in')
+    }
+  },
 
-
-
-  }
+}
 </script>

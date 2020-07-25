@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import firebase from "firebase/app";
+import firebase from 'firebase/app'
 import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
@@ -10,7 +10,7 @@ const routes = [
     path: '/',
     name: 'All games',
     component: Home,
-    meta: { layout: 'main', auth: true },
+    meta: { layout: 'main', auth: true }
   },
   {
     path: '/signin',
@@ -32,9 +32,9 @@ const routes = [
   },
   {
     path: '/players/:id',
-    name: 'Players',
+    name: 'Player',
     meta: { layout: 'main', auth: true },
-    component: () => import('../views/Profile.vue')
+    component: () => import('../views/Player.vue')
   },
   {
     path: '/profile',
@@ -53,25 +53,24 @@ const routes = [
     name: 'Create Game',
     meta: { layout: 'main', auth: true },
     component: () => import('../views/CreateGame.vue')
-  },
+  }
 
-];
+]
 
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
-});
+})
 
 router.beforeEach((to, from, next) => {
-  const currentUser = firebase.auth().currentUser;
-  const requiredAuth = to.matched.some(record => record.meta.auth);
-  if(requiredAuth && !currentUser){
+  const currentUser = firebase.auth().currentUser
+  const requiredAuth = to.matched.some(record => record.meta.auth)
+  if (requiredAuth && !currentUser) {
     next('/signin')
-  }else{
+  } else {
     next()
   }
-});
-
+})
 
 export default router

@@ -7,7 +7,6 @@ import 'tiptap-vuetify/dist/main.css'
 // Vuetify's CSS styles
 import 'vuetify/dist/vuetify.min.css'
 
-
 // Vuetify Object (as described in the Vuetify 2 documentation)
 const vuetify = new Vuetify()
 
@@ -19,4 +18,4 @@ Vue.use(TiptapVuetifyPlugin, {
   vuetify, // same as "vuetify: vuetify"
   // optional, default to 'md' (default vuetify icons before v2.0.0)
   iconsGroup: 'md'
-});
+})

@@ -16,16 +16,16 @@
 </template>
 
 <script>
-  import moment from 'moment'
-  export default {
-    name: "CardGameDetails",
-    props:['address', 'date', 'time', 'skill'],
-    computed: {
-      getTime(){
-        return moment(this.time, 'h:mm').format('hh:mm A')
-      },
+import moment from 'moment'
+export default {
+  name: 'CardGameDetails',
+  props: ['address', 'date', 'time', 'skill'],
+  computed: {
+    getTime () {
+      return moment(this.time, 'h:mm').format('hh:mm A')
     }
   }
+}
 </script>
 
 <style scoped>

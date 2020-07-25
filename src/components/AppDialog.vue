@@ -13,18 +13,18 @@
 </template>
 
 <script>
-  export default {
-    name: "AppDialog",
-    props:{
-      dialog:{
-        required: true,
-        type: Boolean
-      },
-      title:{
-        type: String
-      }
+export default {
+  name: 'AppDialog',
+  props: {
+    dialog: {
+      required: true,
+      type: Boolean
+    },
+    title: {
+      type: String
     }
   }
+}
 </script>
 
 <style scoped>

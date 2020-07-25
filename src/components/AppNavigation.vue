@@ -7,7 +7,7 @@
       {{ $route.name}}
     </v-toolbar-title>
     <v-spacer></v-spacer>
-    <v-btn v-if="$route.path !== '/'" class="hidden-md-and-up" text @click="$router.push('/')">
+    <v-btn v-if="isBackBtn" class="hidden-md-and-up" text @click="$router.go(-1)">
       <v-icon>mdi-chevron-left</v-icon>
       <span>Back</span>
     </v-btn>
@@ -77,31 +77,34 @@
 </template>
 
 <script>
-  export default {
-    name: "Navigation",
-    data(){
-      return{
-        drawer: false,
-        links: [
-          { title: 'Games', path: '/', icon: 'mdi-soccer'},
-          { title: 'Create Game', path: '/create-game', icon: 'mdi-plus' },
-          { title: 'Players', path: '/players', icon: 'mdi-account-group' },
-          { title: 'Profile', path: '/profile', icon: 'mdi-account' },
-        ]
-      }
+export default {
+  name: 'Navigation',
+  data () {
+    return {
+      drawer: false,
+      links: [
+        { title: 'Games', path: '/', icon: 'mdi-soccer' },
+        { title: 'Create Game', path: '/create-game', icon: 'mdi-plus' },
+        { title: 'Players', path: '/players', icon: 'mdi-account-group' },
+        { title: 'Profile', path: '/profile', icon: 'mdi-account' }
+      ]
+    }
+  },
+  computed: {
+    info () {
+      return this.$store.getters.info
     },
-    computed:{
-      info(){
-        return this.$store.getters.info
-      }
-    },
-    methods:{
-      async signOut(){
-        await this.$store.dispatch('signOut');
-        await this.$router.push('/signin')
-      }
+    isBackBtn () {
+      return !!(this.$route.name === 'Game' && this.$route.params.id) || !!(this.$route.name === 'Player' && this.$route.params.id)
+    }
+  },
+  methods: {
+    async signOut () {
+      await this.$store.dispatch('signOut')
+      await this.$router.push('/signin')
     }
   }
+}
 </script>
 
 <style scoped>

@@ -6,22 +6,22 @@
 </template>
 
 <script>
-  export default {
-    name: "CardGameImage",
-    props: {
-      imgUrl:{
-        type: String
-      },
-      type:{
-        type: String
-      }
+export default {
+  name: 'CardGameImage',
+  props: {
+    imgUrl: {
+      type: String
     },
-    computed: {
-      width(){
-        return window.innerWidth;
-      }
+    type: {
+      type: String
+    }
+  },
+  computed: {
+    width () {
+      return window.innerWidth
     }
   }
+}
 </script>
 
 <style scoped>

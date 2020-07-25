@@ -12,11 +12,16 @@
 </template>
 
 <script>
-  import RegisterForm from "../components/Forms/RegisterForm";
-  export default {
-    name: "Register",
-    components: { RegisterForm },
-  }
+import RegisterForm from '../components/Forms/RegisterForm'
+export default {
+  name: 'Register',
+  components: { RegisterForm },
+  metaInfo () {
+    return {
+      title: this.$title('Register')
+    }
+  },
+}
 </script>
 
 <style scoped>

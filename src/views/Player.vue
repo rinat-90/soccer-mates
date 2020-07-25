@@ -7,12 +7,15 @@
 <script>
 import PlayerProfile from '../components/PlayerProfile'
 export default {
-  name: 'Profile',
+  name: 'Player',
   components: { PlayerProfile },
-  computed: {
-    playerId () {
-      return this.$store.getters.info.userId
+  data () {
+    return {
+      playerId: ''
     }
+  },
+  mounted () {
+    this.playerId = this.$route.params.id
   }
 }
 </script>

@@ -10,11 +10,16 @@
 </template>
 
 <script>
-  import CreateGameForm from "../components/Forms/CreateGameForm";
-  export default {
-    name: "CreateGame",
-    components: { CreateGameForm}
+import CreateGameForm from '../components/Forms/CreateGameForm'
+export default {
+  name: 'CreateGame',
+  components: { CreateGameForm },
+  metaInfo () {
+    return {
+      title: this.$title('NewGame')
+    }
   }
+}
 </script>
 
 <style scoped>

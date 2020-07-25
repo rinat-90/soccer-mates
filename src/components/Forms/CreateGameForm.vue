@@ -5,7 +5,7 @@
       v-model="game.address"
       ref="address"
       id="map"
-      label="Address"
+      :label="'Address'"
       :rules="rules.address"
       :placechanged="setPlace"
     >
@@ -31,14 +31,8 @@
       <v-img v-else :src="game.imgUrl" height="180"></v-img>
     </v-card>
     <v-subheader>Game description</v-subheader>
-    <tiptap-vuetify
-      v-model="game.desc"
-      placeholder="Tell more about game…"
-      :extensions="extensions"
-      class="mb-3"
-      :card-props="{flat: true}"
-      style="border-bottom: 1px solid #828282"
-    />
+    <text-editor :desc="game.desc"
+                 @input="(newDesc) => { game.desc = newDesc }" />
 
     <v-btn v-if="type === 'edit'" color="primary" :disabled="!valid" :loading="loading" @click="updateGame">Update</v-btn>
     <v-btn class="ml-2" v-if="type === 'edit'" color="red" dark :loading="loading" @click="cancelGame">Cancel Event</v-btn>
@@ -47,125 +41,101 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
-  import moment from 'moment'
-  import { TiptapVuetify, Heading, Bold, Italic, Underline, Paragraph, BulletList, OrderedList, ListItem, Link, HardBreak, HorizontalRule, History } from 'tiptap-vuetify'
-  export default {
-    name: "CreateGameForm",
-    props: ['type'],
-    components: { TiptapVuetify },
-    data(){
-      return{
-        valid: false,
-        skills: ['All skills level', 'Beginner', 'Intermediate', 'Advanced'],
-        extensions: [
-          History,
-          Link,
-          Underline,
-          Italic,
-          ListItem,
-          BulletList,
-          OrderedList,
-          [Heading, {
-            options: {
-              levels: [1, 2, 3]
-            }
-          }],
-          Bold,
-          HorizontalRule,
-          Paragraph,
-          HardBreak
+import { mapGetters } from 'vuex'
+import moment from 'moment'
+import TextEditor from '../TextEditor'
+export default {
+  name: 'CreateGameForm',
+  components: { TextEditor },
+  props: ['type'],
+  data () {
+    return {
+      valid: false,
+      skills: ['All skills level', 'Beginner', 'Intermediate', 'Advanced'],
+      game: {
+        title: '',
+        location: '',
+        address: '',
+        date: moment().format('YYYY-MM-DD'),
+        time: null,
+        desc: '',
+        imgUrl: '',
+        spots: 2,
+        skillLevel: 'All Skills Level'
+      },
+      rules: {
+        title: [
+          v => !!v || 'Title is required',
+          v => (v && v.length <= 50) || 'Display name must be less than 30 characters'
         ],
-        // starting editor's content
-        content: `
-          <h1>Yay Headlines!</h1>
-          <p>All these <strong>cool tags</strong> are working now.</p>
-        `,
-        game:{
-          title: '',
-          location: '',
-          address: '',
-          date: moment().format('YYYY-MM-DD'),
-          time: null,
-          desc: '',
-          imgUrl: '',
-          spots: 2,
-          skillLevel: 'All Skills Level'
-        },
-        rules:{
-          title: [
-            v => !!v || 'Title is required',
-            v => (v && v.length <= 50) || 'Display name must be less than 30 characters'
-          ],
-          address: [
-            v => !!v || 'Location is required',
-          ],
-          desc: [
-            v => !!v || 'Description is required',
-          ],
-          imgUrl: [
-            v => !!v || 'Image Url is required',
-          ],
-          date: [
-            v => !!v || 'Pick a date',
-            v => v >= moment().format('YYYY-MM-DD') || 'Date must be valid'
-          ],
-          time: [
-            v => !!v || 'Pick a time',
-          ],
-        },
-      }
-    },
-    computed:{
-      ...mapGetters(['error', 'loading', 'gameById']),
-    },
-    methods:{
-      async createGame(){
-        if(this.$refs.form.validate() && this.game.desc !== ''){
-          const key =  await this.$store.dispatch('createGame', this.game);
-          await this.$refs.form.reset();
-          await this.$router.push(`/game/${key}`);
-        }
-      },
-      async updateGame(){
-        if(this.$refs.form.validate()){
-          await this.$store.dispatch('updateGame', this.game);
-          this.$emit('onInput', 'update')
-        }
-
-      },
-      async cancelGame(){
-        await this.$store.dispatch('cancelGame', this.game.id);
-        this.$emit('onInput', 'cancel-game')
-      },
-      setPlace(addressData, placeResultData, id){
-        this.game.location = addressData;
-        console.log('address data', addressData)
-      },
-      onPickFile(){
-        this.$refs.fileInput.click()
-      },
-      onFilePicked(e){
-        const files = e.target.files;
-        const fileName = files[0].name;
-        //console.log(files[0]);
-        if(fileName.lastIndexOf('.') <= 0){
-          return alert('Please add proper file')
-        }
-        const fileReader = new FileReader();
-        fileReader.addEventListener('load', () => {
-          this.game.imgUrl = fileReader.result
-        });
-        fileReader.readAsDataURL(files[0])
-        this.game.image = files[0]
-      }
-    },
-    mounted() {
-      if(this.type === 'edit'){
-        this.game = this.gameById(this.$route.params.id)
+        address: [
+          v => !!v || 'Location is required'
+        ],
+        desc: [
+          v => !!v || 'Description is required'
+        ],
+        imgUrl: [
+          v => !!v || 'Image Url is required'
+        ],
+        date: [
+          v => !!v || 'Pick a date',
+          v => v >= moment().format('YYYY-MM-DD') || 'Date must be valid'
+        ],
+        time: [
+          v => !!v || 'Pick a time'
+        ]
       }
     }
+  },
+  computed: {
+    ...mapGetters(['error', 'loading', 'gameById'])
+  },
+  methods: {
+    async createGame () {
+      if (this.$refs.form.validate() && this.game.desc !== '') {
+        const key = await this.$store.dispatch('createGame', this.game)
+        await this.$refs.form.reset()
+        await this.$router.push(`/game/${key}`)
+      }
+    },
+    async updateGame () {
+      if (this.$refs.form.validate()) {
+        await this.$store.dispatch('updateGame', this.game)
+        this.$emit('onInput', 'update')
+      }
+    },
+    async cancelGame () {
+      await this.$store.dispatch('cancelGame', this.game.id)
+      this.$emit('onInput', 'cancel-game')
+    },
+    setPlace (addressData, placeResultData, id) {
+      this.game.location = addressData
+      console.log('address data', addressData)
+    },
+    onPickFile () {
+      this.$refs.fileInput.click()
+    },
+    onFilePicked (e) {
+      const files = e.target.files
+      const fileName = files[0].name
+      // console.log(files[0]);
+      if (fileName.lastIndexOf('.') <= 0) {
+        return alert('Please add proper file')
+      }
+      const fileReader = new FileReader()
+      fileReader.addEventListener('load', () => {
+        this.game.imgUrl = fileReader.result
+      })
+      fileReader.readAsDataURL(files[0])
+      this.game.image = files[0]
+    }
+  },
+  mounted () {
+    if (this.type === 'edit') {
+      this.game = this.gameById(this.$route.params.id)
+    }
   }
+}
 </script>
 
 <style scoped>

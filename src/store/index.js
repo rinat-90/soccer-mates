@@ -5,9 +5,9 @@ import auth from './modules/auth'
 import info from './modules/info'
 import games from './modules/games'
 import players from './modules/players'
-import { CLEAR_ERROR, SET_ERROR, SET_LOADING } from "./types";
+import { CLEAR_ERROR, SET_ERROR, SET_LOADING } from './types'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
@@ -15,23 +15,23 @@ export default new Vuex.Store({
     error: null
   },
   mutations: {
-    [SET_LOADING](state, payload){
+    [SET_LOADING] (state, payload) {
       state.loading = payload
     },
-    [SET_ERROR](state, payload){
+    [SET_ERROR] (state, payload) {
       state.error = payload
     },
-    [CLEAR_ERROR](state){
+    [CLEAR_ERROR] (state) {
       state.error = null
-    },
+    }
   },
   actions: {
   },
-  getters:{
-    error(state){
+  getters: {
+    error (state) {
       return state.error
     },
-    loading(state){
+    loading (state) {
       return state.loading
     }
   },

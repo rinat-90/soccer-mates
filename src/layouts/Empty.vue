@@ -14,36 +14,36 @@
 </template>
 
 <script>
-  import {mapGetters} from "vuex";
-  import messages from "../utils/messages";
-  export default {
-    name: "Empty",
-    data(){
-      return{
-        snackbar: false,
-        text: ''
-      }
-    },
-    computed:{
-      ...mapGetters(['error']),
-
-    },
-    watch:{
-      error(val){
-        if(val){
-          this.text = messages[this.error.code];
-          this.snackbar = true
-        }
-      }
-    },
-    mounted() {
-      setTimeout(() => {
-        if(this.$refs.bg){
-          console.log(this.$refs.bg.className = 'bg');
-        }
-      },500)
+import { mapGetters } from 'vuex'
+import messages from '../utils/messages'
+export default {
+  name: 'Empty',
+  data () {
+    return {
+      snackbar: false,
+      text: ''
     }
+  },
+  computed: {
+    ...mapGetters(['error'])
+
+  },
+  watch: {
+    error (val) {
+      if (val) {
+        this.text = messages[this.error.code]
+        this.snackbar = true
+      }
+    }
+  },
+  mounted () {
+    setTimeout(() => {
+      if (this.$refs.bg) {
+        console.log(this.$refs.bg.className = 'bg')
+      }
+    }, 500)
   }
+}
 </script>
 
 <style scoped>

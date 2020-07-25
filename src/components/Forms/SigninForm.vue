@@ -16,40 +16,40 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
-  export default {
-    name: "SigninForm",
-    data(){
-      return{
-        valid: false,
-        user:{
-          email: '',
-          password: '',
-        },
-        rules:{
-          email: [
-            v => !!v || 'E-mail is required',
-            v => /.+@.+/.test(v) || 'E-mail must be valid'
-          ],
-          password: [
-            v => !!v || 'Password is required',
-            v => (v && v.length >= 6) || 'Password must be at least 6 characters'
-          ],
-        },
+import { mapGetters } from 'vuex'
+export default {
+  name: 'SigninForm',
+  data () {
+    return {
+      valid: false,
+      user: {
+        email: '',
+        password: ''
+      },
+      rules: {
+        email: [
+          v => !!v || 'E-mail is required',
+          v => /.+@.+/.test(v) || 'E-mail must be valid'
+        ],
+        password: [
+          v => !!v || 'Password is required',
+          v => (v && v.length >= 6) || 'Password must be at least 6 characters'
+        ]
       }
-    },
-    computed:{
-      ...mapGetters(['loading', 'error'])
-    },
-    methods:{
-      async signIn(){
-        if(this.$refs.form.validate()){
-          await this.$store.dispatch('signIn', this.user);
-          await this.$router.push('/')
-        }
+    }
+  },
+  computed: {
+    ...mapGetters(['loading', 'error'])
+  },
+  methods: {
+    async signIn () {
+      if (this.$refs.form.validate()) {
+        await this.$store.dispatch('signIn', this.user)
+        await this.$router.push('/')
       }
     }
   }
+}
 </script>
 
 <style scoped>

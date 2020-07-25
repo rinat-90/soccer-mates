@@ -18,11 +18,11 @@ Vue.use(VuetifyToast, {
   closeText: '', // default
   closeIcon: 'mdi-close', // default
   closeColor: 'black', // default
-  slot: [], //default
+  slot: [], // default
   shorts: {
     custom: {
       color: 'purple'
     }
   },
   property: '$toast' // default
-});
+})
