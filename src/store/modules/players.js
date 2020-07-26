@@ -1,4 +1,4 @@
-import { CLEAR_ERROR, SET_ERROR, SET_LOADING, SET_PLAYERS } from '../types'
+import { CLEAR_ERROR, CLEAR_PLAYERS, SET_ERROR, SET_LOADING, SET_PLAYERS } from '../types'
 import firebase from 'firebase'
 
 export default {
@@ -8,6 +8,9 @@ export default {
   mutations: {
     [SET_PLAYERS] (state, payload) {
       state.players = payload
+    },
+    [CLEAR_PLAYERS] (state) {
+      state.players = []
     }
   },
   actions: {

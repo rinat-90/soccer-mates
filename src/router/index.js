@@ -53,6 +53,12 @@ const routes = [
     name: 'Create Game',
     meta: { layout: 'main', auth: true },
     component: () => import('../views/CreateGame.vue')
+  },
+  {
+    path: '*',
+    name: '404: Page not found',
+    meta: { layout: 'main', auth: true },
+    component: () => import('../views/NotFound.vue')
   }
 
 ]

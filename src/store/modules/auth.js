@@ -1,5 +1,5 @@
 import firebase from 'firebase/app'
-import { CLEAR_ERROR, SET_ERROR, SET_LOADING, CLEAR_INFO } from '../types'
+import {CLEAR_ERROR, SET_ERROR, SET_LOADING, CLEAR_INFO, CLEAR_GAMES, CLEAR_PLAYERS} from '../types'
 export default {
   actions: {
     async register ({ commit, dispatch }, { email, password, displayName }) {
@@ -35,6 +35,20 @@ export default {
     async signOut ({ commit }) {
       await firebase.auth().signOut()
       commit(CLEAR_INFO)
+      commit(CLEAR_GAMES)
+      commit(CLEAR_PLAYERS)
+    },
+    async updateEmail ({ commit }, email) {
+      try {
+        const user = firebase.auth().currentUser
+        if (user) {
+          await user.updateEmail(email)
+        }
+      } catch (error) {
+        commit(SET_LOADING, false)
+        commit(SET_ERROR, error)
+        throw error
+      }
     },
     getUid () {
       const user = firebase.auth().currentUser

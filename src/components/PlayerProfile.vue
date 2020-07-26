@@ -1,6 +1,17 @@
 <template>
   <v-layout row wrap>
     <v-card width="100%">
+      <v-btn
+        v-if="playerId === info.userId"
+        @click="editing = !editing"
+        class="mx-2"
+        color="primary"
+        absolute
+        right
+        text
+        fab>
+        <v-icon dark>mdi-pencil</v-icon>
+      </v-btn>
       <v-card-text>
         <div class="text-center mb-5">
           <v-hover v-slot:default="{ hover }">
@@ -26,9 +37,17 @@
             type="file"
             style="display: none" />
           <div class="display-1 mt-2">{{ player.displayName }}</div>
-          <p>{{ player.email }}</p>
+          <p v-if="playerId === info.userId">{{ player.email }}</p>
+          <v-expand-transition >
+            <div v-if="editing">
+              <div class="pa-3 primary lighten-5">
+                <div class="headline">My info</div>
+                <User-profile-form @onClose="editing = !editing" />
+              </div>
+            </div>
+          </v-expand-transition>
           <v-divider></v-divider>
-          <div class="mt-2 d-flex justify-center">
+          <div class="mt-4 d-flex justify-center">
             <div>
               <span class="headline"><strong>{{ goingGames.length }}</strong></span><br>
               <span>Attended</span>
@@ -82,16 +101,18 @@
 <script>
 import { mapGetters } from 'vuex'
 import AppGamesList from '../components/AppGamesList'
+import UserProfileForm from './Forms/UserProfileForm'
 import moment from 'moment'
 export default {
   name: 'PlayerProfile',
   props: ['playerId'],
-  components: { AppGamesList },
+  components: { AppGamesList, UserProfileForm },
   data () {
     return {
       imgUrl: '',
       tab: null,
-      items: ['Attending Games', 'Organized Games']
+      items: ['Attending Games', 'Organized Games'],
+      editing: false
     }
   },
   async mounted () {
@@ -105,7 +126,7 @@ export default {
   computed: {
     ...mapGetters(['loading', 'error', 'playerById', 'info', 'games']),
     player () {
-      return this.playerId ? this.playerById(this.playerId) : null
+      return this.playerId !== this.info.userId ? this.playerById(this.playerId) : this.info
     },
     createdGames () {
       return this.games.length

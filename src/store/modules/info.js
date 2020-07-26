@@ -31,14 +31,16 @@ export default {
         throw error
       }
     },
-    async updateInfo ({ commit, dispatch, getters }, toUpdate) {
+    async updateUserInfo ({ commit, dispatch, getters }, userData) {
       try {
         const uid = await dispatch('getUid')
-        const updateData = { ...getters.info, ...toUpdate }
-        await firebase.database().ref(`/users/${uid}/info`).update(updateData)
-        commit('SET_INFO', updateData)
+        if (getters.info.email !== userData.email) {
+          await dispatch('updateEmail', userData.email)
+        }
+        await firebase.database().ref(`/users/${uid}/info`).update(userData)
+        commit(SET_INFO, userData)
       } catch (error) {
-        commit('SET_ERROR', error)
+        commit(SET_ERROR, error)
         throw error
       }
     },

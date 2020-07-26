@@ -2,7 +2,7 @@ import firebase from 'firebase/app'
 import {
   ADD_GAME,
   CANCEL_GAME,
-  CLEAR_ERROR,
+  CLEAR_ERROR, CLEAR_GAMES,
   JOIN_GAME,
   SET_ERROR,
   SET_GAMES,
@@ -56,6 +56,9 @@ export default {
         games[index].going[key] = uid
       }
       state.games = games
+    },
+    [CLEAR_GAMES] (state) {
+      state.games = []
     }
   },
   actions: {
