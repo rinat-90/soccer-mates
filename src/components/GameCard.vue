@@ -1,52 +1,56 @@
 <template>
-  <v-card :to="isRouter">
-    <div v-if="type === 'short'">
-      <slot
-        v-if="creator"
-        name="organizer"
-        :creator="creator" />
-    </div>
-    <div>
-      <slot
-        name="image"
-        :size="size"
-        :imgUrl="game.imgUrl" />
-    </div>
-    <v-card-title>{{ game.title }}</v-card-title>
-    <v-card-subtitle>
-      <slot
-        name="subtitle"
-        :subtitle="subtitle"
-        :status="game.status" />
-    </v-card-subtitle>
-    <v-card-text>
-      <slot
-        name="gameDetails"
-        :address="game.address"
-        :skill="game.skillLevel"
-        :date="game.date"
-        :time="game.time" />
-    </v-card-text>
-    <v-card-text v-if="type === 'long'">
-      <slot
-        name="gameInfo"
-        :game="game"
-        :creator="creator"
-        :roaster="roaster"
-        :subtitle="spots" />
-    </v-card-text>
-    <v-card-actions v-if="type === 'long'">
-      <slot
-        name="gameActions"
-        :is-creator="isCreator"
-        :is-canceled="isCanceled"
-        :is-filled="isFilled"
-        :is-finished="isFinished"
-        :is-going="isGoing"
-        :join="join"
-        :unjoin="unjoin"/>
-    </v-card-actions>
-  </v-card>
+  <div>
+    <v-card :to="isRouter">
+      <div v-if="type === 'small'">
+        <slot
+          v-if="creator"
+          name="organizer"
+          :creator="creator" />
+      </div>
+      <div>
+        <slot
+          name="image"
+          :size="size"
+          :imgUrl="game.imgUrl" />
+      </div>
+      <v-card-title>{{ game.title }}</v-card-title>
+      <v-card-subtitle>
+        <slot
+          name="subtitle"
+          :subtitle="subtitle"
+          :status="game.status" />
+      </v-card-subtitle>
+      <v-card-text>
+        <slot
+          name="gameDetails"
+          :address="game.address"
+          :skill="game.skillLevel"
+          :date="game.date"
+          :time="game.time" />
+      </v-card-text>
+      <v-card-text v-if="type === 'large'">
+        <slot
+          name="gameInfo"
+          :game="game"
+          :creator="creator"
+          :roaster="roaster"
+          :subtitle="spots" />
+      </v-card-text>
+      <v-card-actions v-if="type === 'large'">
+        <slot
+          name="gameActions"
+          :is-creator="isCreator"
+          :is-canceled="isCanceled"
+          :is-filled="isFilled"
+          :is-finished="isFinished"
+          :is-going="isGoing"
+          :loading="loading"
+          :join="join"
+          :quit="quit"/>
+      </v-card-actions>
+    </v-card>
+    <app-loader v-if="loading && !game" />
+  </div>
 </template>
 
 <script>
@@ -59,7 +63,7 @@ export default {
     },
     type: {
       type: String,
-      default: 'short'
+      default: 'small'
     },
     gameOrganizer: {
       type: Boolean,
@@ -67,7 +71,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['playerById', 'gameById', 'info']),
+    ...mapGetters(['playerById', 'gameById', 'info', 'loading']),
     game () {
       return this.gameId ? this.gameById(this.gameId) : null
     },
@@ -96,7 +100,7 @@ export default {
       return this.game.status === 'finished'
     },
     isRouter () {
-      return this.type === 'short' ? `/game/${this.game.id}` : ''
+      return this.type === 'small' ? `/game/${this.game.id}` : ''
     },
     spots () {
       return !this.goingPlayers.length
@@ -106,13 +110,13 @@ export default {
           : `${this.goingPlayers.length} going,  ${(+this.game.spots - this.goingPlayers.length)} spots left`
     },
     subtitle () {
-      return this.type === 'short' ? this.spots : this.game.date
+      return this.type === 'small' ? this.spots : this.game.date
     },
     width () {
       return window.innerWidth
     },
     size () {
-      return this.type === 'long'
+      return this.type === 'large'
         ? this.width < 950 ? '200px' : '350px'
         : '200px'
     }
@@ -126,15 +130,22 @@ export default {
     }
   },
   methods: {
-    async unjoin (id) {
+    async quit (id) {
       for (const key in this.game.going) {
         if (this.game.going[key] === this.info.userId) {
-          await this.$store.dispatch('unjoin', { gameId: id, key: key })
+          await this.$store.dispatch('quit', { gameId: id, key: key })
         }
       }
     },
     async join (id) {
       await this.$store.dispatch('join', id)
+    }
+  },
+  watch: {
+    info (val) {
+      if (val) {
+        this.$store.dispatch('fetchPlayers')
+      }
     }
   }
 }

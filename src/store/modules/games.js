@@ -25,7 +25,7 @@ export default {
       const games = [...state.games]
       const indx = games.findIndex(g => g.id === payload.id)
       if (indx >= 0) {
-        games[indx].status = payload.status
+        games[indx] = payload
       }
       state.games = games
     },
@@ -130,7 +130,7 @@ export default {
         throw error
       }
     },
-    async unjoin ({ commit, dispatch }, { gameId, key }) {
+    async quit ({ commit, dispatch }, { gameId, key }) {
       try {
         commit(CLEAR_ERROR)
         commit(SET_LOADING, true)

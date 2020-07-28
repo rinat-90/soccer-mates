@@ -1,4 +1,4 @@
-import { CLEAR_ERROR, CLEAR_PLAYERS, SET_ERROR, SET_LOADING, SET_PLAYERS } from '../types'
+import {CLEAR_ERROR, CLEAR_PLAYERS, SET_ERROR, SET_LOADING, SET_PLAYERS, UPDATE_PLAYER} from '../types'
 import firebase from 'firebase'
 
 export default {
@@ -11,6 +11,14 @@ export default {
     },
     [CLEAR_PLAYERS] (state) {
       state.players = []
+    },
+    [UPDATE_PLAYER] (state, payload) {
+      const players = [...state.players]
+      const indx = players.findIndex(p => p.userId === payload.userId)
+      if (indx >= 0) {
+        players[indx] = payload
+      }
+      state.players = players
     }
   },
   actions: {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <app-games-list v-if="sortedGames.length" :games="sortedGames" :type="'short'" />
+    <app-games-list v-if="sortedGames.length" :games="sortedGames" :type="'small'" />
     <app-loader v-else />
   </div>
 </template>

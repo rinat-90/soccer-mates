@@ -1,5 +1,5 @@
 import firebase from 'firebase/app'
-import { CLEAR_ERROR, CLEAR_INFO, SET_ERROR, SET_INFO, SET_LOADING, UPLOAD_INFO_PHOTO } from '../types'
+import {CLEAR_ERROR, CLEAR_INFO, SET_ERROR, SET_INFO, SET_LOADING, UPDATE_PLAYER, UPLOAD_INFO_PHOTO} from '../types'
 export default {
   state: {
     info: {}
@@ -39,6 +39,7 @@ export default {
         }
         await firebase.database().ref(`/users/${uid}/info`).update(userData)
         commit(SET_INFO, userData)
+        commit(UPDATE_PLAYER, userData)
       } catch (error) {
         commit(SET_ERROR, error)
         throw error

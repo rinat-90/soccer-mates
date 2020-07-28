@@ -86,7 +86,7 @@
                 <div v-else>
                   <app-loader v-if="loading" />
                   <div v-if="goingGames.length">
-                    <app-games-list :games="goingGames" :type="'short'" />
+                    <app-games-list :games="goingGames" :type="'small'" />
                   </div>
                 </div>
               </v-card-text>

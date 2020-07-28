@@ -61,7 +61,7 @@ export default {
     onClose () {
       this.$emit('onClose')
     },
-    async onUpdateHandler (){
+    async onUpdateHandler () {
       if (this.$refs.form.validate()) {
         if (this.userData.positions.length > 1) {
           this.userData.positions = this.userData.positions.filter(p => p !== 'Any')

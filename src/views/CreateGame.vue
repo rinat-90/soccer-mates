@@ -4,7 +4,7 @@
       <div class="display-1  mx-auto">New Game Event</div>
     </v-card-title>
     <v-card-text>
-      <create-game-form />
+      <create-game-form type="new-game" />
     </v-card-text>
   </v-card>
 </template>

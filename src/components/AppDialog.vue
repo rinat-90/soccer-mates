@@ -1,11 +1,17 @@
 <template>
-  <v-dialog :value="dialog" width="600" @click:outside="$emit('onClose')">
+  <v-dialog
+    :value="dialog"
+    width="800"
+    @click:outside="$emit('onClose')">
     <v-card>
       <v-toolbar dark color="primary">
         <span>{{ title }}</span>
         <v-spacer></v-spacer>
+        <v-btn icon @click="$emit('onClose')">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
       </v-toolbar>
-      <v-card-text>
+      <v-card-text class="mt-5">
         <slot></slot>
       </v-card-text>
     </v-card>

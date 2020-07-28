@@ -14,6 +14,7 @@
     <v-text-field v-model="game.time" type="time" label="Time" :rules="rules.time"></v-text-field>
     <v-text-field v-model="game.spots" type="number" label="Spots" :rules="rules.spots"></v-text-field>
     <v-select v-model="game.skillLevel" :items="skills" label="Skill Level"></v-select>
+    <v-file-input v-if="type !== 'edit'" v-model="image" chip></v-file-input>
 <!--    <v-text-field readonly @click="onPickFile" v-model="game.imgUrl" label="Image" :rules="rules.imgUrl"></v-text-field>-->
     <input
       @change="onFilePicked"
@@ -21,22 +22,26 @@
       accept="image/*"
       type="file"
       style="display: none" />
-    <v-card color="primary lighten-4" flat class="d-flex justify-center mx-auto" max-width="500" height="180">
-      <div v-if="!game.imgUrl" class="align-self-center text-center">
+    <v-card v-if="type !== 'edit'" color="primary lighten-4" flat class="d-flex justify-center mx-auto" max-width="500" height="180">
+      <div v-if="!imgUrl" class="align-self-center text-center">
         <v-btn  @click="onPickFile" x-large icon color="primary" >
           <v-icon>mdi-camera</v-icon>
         </v-btn>
         <p>Upload your image</p>
       </div>
-      <v-img v-else :src="game.imgUrl" height="180"></v-img>
+      <v-img v-else :src="imgUrl" height="180"></v-img>
     </v-card>
     <v-subheader>Game description</v-subheader>
-    <text-editor :desc="game.desc"
-                 @input="(newDesc) => { game.desc = newDesc }" />
+    <text-editor :desc="game.desc" @input="(newDesc) => { game.desc = newDesc }" />
 
-    <v-btn v-if="type === 'edit'" color="primary" :disabled="!valid" :loading="loading" @click="updateGame">Update</v-btn>
-    <v-btn class="ml-2" v-if="type === 'edit'" color="red" dark :loading="loading" @click="cancelGame">Cancel Event</v-btn>
-    <v-btn v-else color="primary" :disabled="!valid" :loading="loading" @click="createGame">Create</v-btn>
+    <v-select v-if="type === 'edit'" v-model="game.status" :value="game.status" :items="['scheduled','canceled']" label="Game status"></v-select>
+
+    <div class="d-flex">
+      <v-spacer></v-spacer>
+      <v-btn v-if="type === 'edit'" class="mr-2"  @click="$emit('onClose')">Close</v-btn>
+      <v-btn v-if="type === 'edit'" color="primary" :disabled="!valid" :loading="loading" @click="updateGame">Update</v-btn>
+      <v-btn v-else color="primary" :disabled="!valid" :loading="loading" @click="createGame">Create</v-btn>
+    </div>
   </v-form>
 </template>
 
@@ -52,17 +57,19 @@ export default {
     return {
       valid: false,
       skills: ['All skills level', 'Beginner', 'Intermediate', 'Advanced'],
-      game: {
+      statuses: ['scheduled', 'canceled', 'postponed'],
+      newGame: {
         title: '',
         location: '',
         address: '',
         date: moment().format('YYYY-MM-DD'),
         time: null,
         desc: '',
-        imgUrl: '',
         spots: 2,
         skillLevel: 'All Skills Level'
       },
+      image: null,
+      imgUrl: '',
       rules: {
         title: [
           v => !!v || 'Title is required',
@@ -83,17 +90,47 @@ export default {
         ],
         time: [
           v => !!v || 'Pick a time'
+        ],
+        spots: [
+          v => !!v || 'This field required',
+          v => this.validateSpots(v) || 'Unable to set spot number less than number of joined players'
         ]
       }
     }
   },
   computed: {
-    ...mapGetters(['error', 'loading', 'gameById'])
+    ...mapGetters(['error', 'loading', 'gameById']),
+    game () {
+      if (this.type === 'edit') {
+        return {
+          ...this.gameById(this.$route.params.id)
+        }
+      } else {
+        return {
+          ...this.newGame
+        }
+      }
+    },
+    goingPlayers () {
+      return this.game ? Object.values(this.game.going) : []
+    }
   },
   methods: {
+    validateSpots (v) {
+      const going = this.goingPlayers.length
+      if (this.type === 'edit' && going > 0) {
+        if (going <= +v) {
+          return true
+        }
+      } else if (this.type === 'new-game') {
+        if (v > 1) {
+          return true
+        }
+      }
+    },
     async createGame () {
       if (this.$refs.form.validate() && this.game.desc !== '') {
-        const key = await this.$store.dispatch('createGame', this.game)
+        const key = await this.$store.dispatch('createGame', { ...this.game, image: this.image })
         await this.$refs.form.reset()
         await this.$router.push(`/game/${key}`)
       }
@@ -102,6 +139,7 @@ export default {
       if (this.$refs.form.validate()) {
         await this.$store.dispatch('updateGame', this.game)
         this.$emit('onInput', 'update')
+        console.log(this.game)
       }
     },
     async cancelGame () {
@@ -115,24 +153,43 @@ export default {
     onPickFile () {
       this.$refs.fileInput.click()
     },
-    onFilePicked (e) {
-      const files = e.target.files
-      const fileName = files[0].name
-      // console.log(files[0]);
+    // onFilePicked (e) {
+    //   const files = e.target.files
+    //   const fileName = files[0].name
+    //   // console.log(files[0]);
+    //   if (fileName.lastIndexOf('.') <= 0) {
+    //     return alert('Please add proper file')
+    //   }
+    //   const fileReader = new FileReader()
+    //   fileReader.addEventListener('load', () => {
+    //     this.imgUrl = fileReader.result
+    //   })
+    //   fileReader.readAsDataURL(files[0])
+    //   this.image = files[0]
+    // }
+    onFilePicked (file) {
+      const fileName = file.name
       if (fileName.lastIndexOf('.') <= 0) {
         return alert('Please add proper file')
       }
       const fileReader = new FileReader()
       fileReader.addEventListener('load', () => {
-        this.game.imgUrl = fileReader.result
+        this.imgUrl = fileReader.result
       })
-      fileReader.readAsDataURL(files[0])
-      this.game.image = files[0]
+      fileReader.readAsDataURL(file)
     }
   },
   mounted () {
-    if (this.type === 'edit') {
-      this.game = this.gameById(this.$route.params.id)
+    // if (this.type === 'edit') {
+    //   this.game = this.gameById(this.$route.params.id)
+    // }
+  },
+  watch: {
+    image (val) {
+      if (val) {
+        this.onFilePicked(val)
+        console.log(val)
+      }
     }
   }
 }

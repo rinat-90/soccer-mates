@@ -4,7 +4,7 @@
     placeholder="Tell more about game…"
     :extensions="extensions"
     class="mb-3"
-    :card-props="{ flat: true }"
+    :card-props="{ flat: true, minHeight: '200px' }"
     style="border-bottom: 1px solid #828282"
   />
 </template>
