@@ -1,6 +1,6 @@
 <template>
-  <v-row v-if="info">
-    <player-profile :player-id="info.userId" />
+  <v-row v-if="userId">
+    <player-profile :player-id="userId" />
   </v-row>
 </template>
 
@@ -9,9 +9,14 @@ import PlayerProfile from '../components/PlayerProfile'
 export default {
   name: 'Profile',
   components: { PlayerProfile },
+  metaInfo () {
+    return {
+      title: this.$title('Profile')
+    }
+  },
   computed: {
-    info () {
-      return this.$store.getters.info
+    userId () {
+      return this.$store.getters.info.userId
     }
   }
 }

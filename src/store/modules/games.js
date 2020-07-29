@@ -7,8 +7,8 @@ import {
   SET_ERROR,
   SET_GAMES,
   SET_LOADING,
-  UNJOIN_GAME,
-  UPDATE_GAME
+  QUIT_GAME,
+  UPDATE_GAME, UPDATE_GAME_IMAGE
 } from '../types'
 export default {
   state: {
@@ -29,6 +29,14 @@ export default {
       }
       state.games = games
     },
+    [UPDATE_GAME_IMAGE] (state, { gameId, imgUrl }) {
+      const games = [...state.games]
+      const indx = games.findIndex(g => g.id === gameId)
+      if (indx >= 0) {
+        games[indx].imgUrl = imgUrl
+      }
+      state.games = games
+    },
     [CANCEL_GAME] (state, id) {
       const games = [...state.games]
       const indx = games.findIndex(g => g.id === id)
@@ -37,7 +45,7 @@ export default {
       }
       state.games = games
     },
-    [UNJOIN_GAME] (state, { key, gameId }) {
+    [QUIT_GAME] (state, { key, gameId }) {
       const games = [...state.games]
       const index = games.findIndex(g => g.id === gameId)
       if (index >= 0) {
@@ -135,7 +143,7 @@ export default {
         commit(CLEAR_ERROR)
         commit(SET_LOADING, true)
         await firebase.database().ref('/games').child(gameId).child('going').child(key).remove()
-        commit(UNJOIN_GAME, { key, gameId })
+        commit(QUIT_GAME, { key, gameId })
         commit(SET_LOADING, false)
       } catch (error) {
         commit(SET_LOADING, false)
@@ -162,6 +170,24 @@ export default {
         commit(SET_LOADING, true)
         await firebase.database().ref('/games').child(id).update({ status: 'canceled' })
         commit(CANCEL_GAME, id)
+        commit(SET_LOADING, false)
+      } catch (error) {
+        commit(SET_LOADING, false)
+        commit(SET_ERROR, error)
+        throw error
+      }
+    },
+    async uploadGameImg ({ commit }, { gameId, image }) {
+      console.log(gameId, image)
+      try {
+        commit(CLEAR_ERROR)
+        commit(SET_LOADING, true)
+        const filename = image.name
+        const ext = filename.slice(filename.lastIndexOf('.'))
+        const file = await firebase.storage().ref(`/games/${gameId}${ext}`).put(image)
+        const url = await file.ref.getDownloadURL()
+        await firebase.database().ref('/games/').child(gameId).update({ imgUrl: url })
+        commit(UPDATE_GAME_IMAGE, { imgUrl: url, gameId })
         commit(SET_LOADING, false)
       } catch (error) {
         commit(SET_LOADING, false)

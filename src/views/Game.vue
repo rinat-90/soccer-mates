@@ -3,8 +3,8 @@
     <v-col cols="12" sm="12" md="10" offset-md="1" ld="10" offset-lg="1">
 
       <game-card v-if="$route.params.id" :game-id="$route.params.id" :type="'large'">
-        <template #image="{ size, imgUrl }">
-          <v-img v-if="imgUrl" :height="size" :src="imgUrl"></v-img>
+        <template #image="{ size, imgUrl, isCreator, onFilePicked }">
+          <card-thumbnail :size="size" :img-url="imgUrl" :is-creator="isCreator" :on-file-picked="onFilePicked" />
         </template>
         <template #subtitle="{ subtitle, status }">
           <game-subtitle :subtitle="subtitle" :status="status" />
@@ -53,12 +53,13 @@ import AppDialog from '../components/AppDialog'
 import CreateGameForm from '../components/Forms/CreateGameForm'
 import GameCard from '../components/GameCard'
 import GameOrganizer from '../components/card-partials/GameOrganizer'
+import CardThumbnail from '../components/card-partials/CardThumbnail'
 import GameSubtitle from '../components/card-partials/GameSubtitle'
 import GameDetails from '../components/card-partials/GameDetails'
 import GameRoaster from '../components/card-partials/GameRoaster'
 export default {
   name: 'Game',
-  components: { AppDialog, CreateGameForm, GameCard, GameOrganizer, GameSubtitle, GameDetails, GameRoaster },
+  components: { AppDialog, CreateGameForm, GameCard, GameOrganizer, CardThumbnail, GameSubtitle, GameDetails, GameRoaster },
   data () {
     return {
       dialog: false,

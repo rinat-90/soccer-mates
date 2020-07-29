@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="game">
     <v-card :to="isRouter">
       <div v-if="type === 'small'">
         <slot
@@ -11,6 +11,8 @@
         <slot
           name="image"
           :size="size"
+          :is-creator="isCreator"
+          :on-file-picked="onFilePicked"
           :imgUrl="game.imgUrl" />
       </div>
       <v-card-title>{{ game.title }}</v-card-title>
@@ -88,7 +90,7 @@ export default {
       return this.goingPlayers.length ? !!this.goingPlayers.find(g => g === this.info.userId) : false
     },
     isCreator () {
-      return this.creator.id === this.info.userId
+      return this.creator != null ? this.creator.id === this.info.userId : false
     },
     isCanceled () {
       return this.game.status === 'canceled'
@@ -139,12 +141,31 @@ export default {
     },
     async join (id) {
       await this.$store.dispatch('join', id)
+    },
+    async onFilePicked (e) {
+      const files = e.target.files
+      const fileName = files[0].name
+      // console.log(files[0]);
+      if (fileName.lastIndexOf('.') <= 0) {
+        return alert('Please add proper file')
+      }
+      const fileReader = new FileReader()
+      fileReader.addEventListener('load', () => {
+        this.imgUrl = fileReader.result
+      })
+      fileReader.readAsDataURL(files[0])
+      this.image = files[0]
+      await this.$store.dispatch('uploadGameImg', {
+        gameId: this.gameId,
+        image: this.image
+      })
     }
   },
   watch: {
     info (val) {
       if (val) {
         this.$store.dispatch('fetchPlayers')
+        this.$store.dispatch('fetchGames')
       }
     }
   }

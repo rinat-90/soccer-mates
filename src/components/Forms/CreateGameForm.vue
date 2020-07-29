@@ -5,7 +5,7 @@
       v-model="game.address"
       ref="address"
       id="map"
-      :label="'Address'"
+      label="Location"
       :rules="rules.address"
       :placechanged="setPlace"
     >
@@ -14,7 +14,7 @@
     <v-text-field v-model="game.time" type="time" label="Time" :rules="rules.time"></v-text-field>
     <v-text-field v-model="game.spots" type="number" label="Spots" :rules="rules.spots"></v-text-field>
     <v-select v-model="game.skillLevel" :items="skills" label="Skill Level"></v-select>
-    <v-file-input v-if="type !== 'edit'" v-model="image" chip></v-file-input>
+    <v-file-input label="Choose Image" v-if="type !== 'edit'" v-model="image" :rules="rules.img" accept="image/*" chips></v-file-input>
 <!--    <v-text-field readonly @click="onPickFile" v-model="game.imgUrl" label="Image" :rules="rules.imgUrl"></v-text-field>-->
     <input
       @change="onFilePicked"
@@ -73,16 +73,13 @@ export default {
       rules: {
         title: [
           v => !!v || 'Title is required',
-          v => (v && v.length <= 50) || 'Display name must be less than 30 characters'
+          v => (v && v.length <= 50) || 'Title must be less than 30 characters'
         ],
         address: [
           v => !!v || 'Location is required'
         ],
         desc: [
           v => !!v || 'Description is required'
-        ],
-        imgUrl: [
-          v => !!v || 'Image Url is required'
         ],
         date: [
           v => !!v || 'Pick a date',
@@ -93,41 +90,37 @@ export default {
         ],
         spots: [
           v => !!v || 'This field required',
-          v => this.validateSpots(v) || 'Unable to set spot number less than number of joined players'
+          v => (this.goingPlayers.length ? v > this.goingPlayers.length : v > 1) || 'Invalid Number'
+        ],
+        img: [
+          v => !!v || 'Please add a thumbnail picture'
         ]
       }
     }
   },
   computed: {
     ...mapGetters(['error', 'loading', 'gameById']),
-    game () {
-      if (this.type === 'edit') {
-        return {
-          ...this.gameById(this.$route.params.id)
+    game: {
+      get () {
+        if (this.type === 'edit') {
+          return {
+            ...this.gameById(this.$route.params.id)
+          }
+        } else {
+          return {
+            ...this.newGame
+          }
         }
-      } else {
-        return {
-          ...this.newGame
-        }
+      },
+      set (game) {
+        return game
       }
     },
     goingPlayers () {
-      return this.game ? Object.values(this.game.going) : []
+      return this.type === 'edit' && this.game ? Object.values(this.game.going) : []
     }
   },
   methods: {
-    validateSpots (v) {
-      const going = this.goingPlayers.length
-      if (this.type === 'edit' && going > 0) {
-        if (going <= +v) {
-          return true
-        }
-      } else if (this.type === 'new-game') {
-        if (v > 1) {
-          return true
-        }
-      }
-    },
     async createGame () {
       if (this.$refs.form.validate() && this.game.desc !== '') {
         const key = await this.$store.dispatch('createGame', { ...this.game, image: this.image })
@@ -153,20 +146,6 @@ export default {
     onPickFile () {
       this.$refs.fileInput.click()
     },
-    // onFilePicked (e) {
-    //   const files = e.target.files
-    //   const fileName = files[0].name
-    //   // console.log(files[0]);
-    //   if (fileName.lastIndexOf('.') <= 0) {
-    //     return alert('Please add proper file')
-    //   }
-    //   const fileReader = new FileReader()
-    //   fileReader.addEventListener('load', () => {
-    //     this.imgUrl = fileReader.result
-    //   })
-    //   fileReader.readAsDataURL(files[0])
-    //   this.image = files[0]
-    // }
     onFilePicked (file) {
       const fileName = file.name
       if (fileName.lastIndexOf('.') <= 0) {
@@ -180,15 +159,14 @@ export default {
     }
   },
   mounted () {
-    // if (this.type === 'edit') {
-    //   this.game = this.gameById(this.$route.params.id)
-    // }
+    if (this.type === 'edit') {
+      this.game = this.gameById(this.$route.params.id)
+    }
   },
   watch: {
     image (val) {
       if (val) {
         this.onFilePicked(val)
-        console.log(val)
       }
     }
   }
