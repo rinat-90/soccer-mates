@@ -53,20 +53,6 @@ firebase.initializeApp({
   measurementId: 'G-0JHGX535E0'
 })
 
-const messaging = firebase.messaging()
-
-// Add the public key generated from the console here.
-messaging.usePublicVapidKey('BJw6qT6IspP2hnik9OA-yCbI5o8pR3-dovaP7dwWxjC1-9Ecuxs-AP4fjAxxrlL9MEdnRyB1Dab0JraQ5iIPdus')
-
-messaging.requestPermission().then(() => {
-  console.log('Notification permission granted.')
-  messaging.getToken().then((token) => {
-    console.log(token)
-  })
-}).catch((err) => {
-  console.log('Unable to get permission to notify.', err)
-})
-
 let app
 
 firebase.auth().onAuthStateChanged(() => {
