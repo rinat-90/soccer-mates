@@ -13,20 +13,20 @@
       label="Game Position"
       multiple
     ></v-select>
-    <v-btn @click="onUpdateHandler" :disabled="!valid" color="primary">Update</v-btn>
+    <v-btn @click="updateUserInfo" :disabled="!valid" color="primary">Update</v-btn>
     <v-btn class="ml-2" @click="onClose">Close</v-btn>
   </v-form>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'UserProfileForm',
   data () {
     return {
       valid: false,
       position: 'Any',
-      positions: ['Any', 'Defender', 'Midfielder', 'Forward', 'Goalkeeper', 'Striker', 'Winger', 'Playmaker', 'False 9'],
+      positions: ['Any', 'Goalkeeper', 'Defender', 'Midfielder', 'Forward', 'Striker'],
       rules: {
         displayName: [
           v => !!v || 'Display name is required',
@@ -55,19 +55,25 @@ export default {
     }
   },
   methods: {
+    ...mapActions('snackbar', ['showSnack']),
     onChange (item) {
       // console.log(item)
     },
     onClose () {
       this.$emit('onClose')
     },
-    async onUpdateHandler () {
+    async updateUserInfo () {
       if (this.$refs.form.validate()) {
         if (this.userData.positions.length > 1) {
           this.userData.positions = this.userData.positions.filter(p => p !== 'Any')
         }
         await this.$store.dispatch('updateUserInfo', this.userData)
         this.onClose()
+        await this.showSnack({
+          text: 'Info successfully updated!',
+          color: 'success',
+          timeout: 3500
+        })
       }
     }
   }

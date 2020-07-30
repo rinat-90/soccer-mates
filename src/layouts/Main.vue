@@ -2,6 +2,7 @@
   <div>
     <app-navigation />
     <v-container>
+      <app-toast />
       <router-view />
     </v-container>
   </div>
@@ -10,10 +11,11 @@
 
 <script>
 import AppNavigation from '../components/AppNavigation'
+import AppToast from '../components/AppToast'
 import { mapGetters } from 'vuex'
 export default {
   name: 'Main',
-  components: { AppNavigation },
+  components: { AppNavigation, AppToast },
   computed: {
     ...mapGetters(['error', 'info', 'loading'])
   },

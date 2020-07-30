@@ -1,12 +1,13 @@
 <template>
   <tiptap-vuetify
     v-model="descText"
+    ref="card"
     placeholder="Tell more about game…"
     :extensions="extensions"
     class="mb-3"
-    :card-props="{ flat: true, minHeight: '200px' }"
-    style="border-bottom: 1px solid #828282"
-  />
+    :card-props="{ flat: true, minHeight: '200px', maxHeight: 350,  }"
+    style="border-bottom: 1px solid #828282; overflow-y: scroll"
+   />
 </template>
 
 <script>

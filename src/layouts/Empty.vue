@@ -1,23 +1,20 @@
 <template>
   <div>
+    <app-toast />
     <div ref="bg" class=""></div>
     <v-container class="pa-0">
       <router-view />
     </v-container>
-
-    <app-snackbar
-      :snackbar="snackbar"
-      :text="text"
-      :type="'error'"
-      @onDismiss="snackbar = !snackbar" />
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import messages from '../utils/messages'
+import AppToast from '../components/AppToast'
 export default {
   name: 'Empty',
+  components: { AppToast },
   data () {
     return {
       snackbar: false,
@@ -26,13 +23,18 @@ export default {
   },
   computed: {
     ...mapGetters(['error'])
-
+  },
+  methods: {
+    ...mapActions('snackbar', ['showSnack'])
   },
   watch: {
     error (val) {
       if (val) {
-        this.text = messages[this.error.code]
-        this.snackbar = true
+        this.showSnack({
+          text: messages[this.error.code],
+          color: 'red',
+          timeout: 3500
+        })
       }
     }
   },

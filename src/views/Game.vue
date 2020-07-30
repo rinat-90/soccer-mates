@@ -4,7 +4,7 @@
 
       <game-card v-if="$route.params.id" :game-id="$route.params.id" :type="'large'">
         <template #image="{ size, imgUrl, isCreator, onFilePicked }">
-          <card-thumbnail :size="size" :img-url="imgUrl" :is-creator="isCreator" :on-file-picked="onFilePicked" />
+          <game-thumbnail :size="size" :img-url="imgUrl" :is-creator="isCreator" :on-file-picked="onFilePicked" />
         </template>
         <template #subtitle="{ subtitle, status }">
           <game-subtitle :subtitle="subtitle" :status="status" />
@@ -49,17 +49,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import AppDialog from '../components/AppDialog'
 import CreateGameForm from '../components/Forms/CreateGameForm'
-import GameCard from '../components/GameCard'
-import GameOrganizer from '../components/card-partials/GameOrganizer'
-import CardThumbnail from '../components/card-partials/CardThumbnail'
-import GameSubtitle from '../components/card-partials/GameSubtitle'
-import GameDetails from '../components/card-partials/GameDetails'
-import GameRoaster from '../components/card-partials/GameRoaster'
 export default {
   name: 'Game',
-  components: { AppDialog, CreateGameForm, GameCard, GameOrganizer, CardThumbnail, GameSubtitle, GameDetails, GameRoaster },
+  components: { CreateGameForm },
   data () {
     return {
       dialog: false,

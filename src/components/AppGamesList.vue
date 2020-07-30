@@ -1,5 +1,5 @@
 <template>
-  <v-row v-if="games.length">
+  <v-row>
     <v-col
       sm="12" md="6" lg="4" cols="12"
       v-for="game in games" :key="game.id">

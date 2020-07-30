@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'GameCard',
   props: {
@@ -123,15 +123,8 @@ export default {
         : '200px'
     }
   },
-  async mounted () {
-    if (this.creator == null) {
-      await this.$store.dispatch('fetchPlayers')
-    }
-    if (this.game == null) {
-      await this.$store.dispatch('fetchGames')
-    }
-  },
   methods: {
+    ...mapActions('snackbar', ['showSnack']),
     async quit (id) {
       for (const key in this.game.going) {
         if (this.game.going[key] === this.info.userId) {
@@ -159,6 +152,11 @@ export default {
         gameId: this.gameId,
         image: this.image
       })
+      await this.showSnack({
+        text: 'Game image successfully updated',
+        color: 'primary',
+        timeout: 3500
+      })
     }
   },
   watch: {
@@ -167,6 +165,14 @@ export default {
         this.$store.dispatch('fetchPlayers')
         this.$store.dispatch('fetchGames')
       }
+    }
+  },
+  async mounted () {
+    if (this.creator == null) {
+      await this.$store.dispatch('fetchPlayers')
+    }
+    if (this.game == null) {
+      await this.$store.dispatch('fetchGames')
     }
   }
 }

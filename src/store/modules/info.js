@@ -44,7 +44,7 @@ export default {
         throw error
       }
     },
-    async uploadPhoto ({ commit, dispatch }, payload) {
+    async uploadUserPhoto ({ commit, dispatch }, payload) {
       try {
         commit(CLEAR_ERROR)
         commit(SET_LOADING, true)

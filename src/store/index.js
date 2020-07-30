@@ -5,6 +5,7 @@ import auth from './modules/auth'
 import info from './modules/info'
 import games from './modules/games'
 import players from './modules/players'
+import snackbar from './modules/snackbar'
 import { CLEAR_ERROR, SET_ERROR, SET_LOADING } from './types'
 
 Vue.use(Vuex)
@@ -39,6 +40,7 @@ export default new Vuex.Store({
     auth,
     info,
     games,
-    players
+    players,
+    snackbar
   }
 })

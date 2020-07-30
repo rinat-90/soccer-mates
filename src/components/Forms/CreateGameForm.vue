@@ -1,41 +1,30 @@
 <template>
   <v-form v-model="valid" ref="form">
-    <v-text-field v-model="game.title" label="Title" :rules="rules.title"></v-text-field>
+    <v-text-field v-model="game.title" label="Title" :rules="rules.title" prepend-icon="mdi-format-title"></v-text-field>
     <vuetify-google-autocomplete
       v-model="game.address"
       ref="address"
       id="map"
       label="Location"
+      placeholder=""
       :rules="rules.address"
+      prepend-icon="mdi-map-marker"
       :placechanged="setPlace"
     >
     </vuetify-google-autocomplete>
-    <v-text-field v-model="game.date" type="date" label="Date" :rules="rules.date"></v-text-field>
-    <v-text-field v-model="game.time" type="time" label="Time" :rules="rules.time"></v-text-field>
-    <v-text-field v-model="game.spots" type="number" label="Spots" :rules="rules.spots"></v-text-field>
-    <v-select v-model="game.skillLevel" :items="skills" label="Skill Level"></v-select>
-    <v-file-input label="Choose Image" v-if="type !== 'edit'" v-model="image" :rules="rules.img" accept="image/*" chips></v-file-input>
-<!--    <v-text-field readonly @click="onPickFile" v-model="game.imgUrl" label="Image" :rules="rules.imgUrl"></v-text-field>-->
-    <input
-      @change="onFilePicked"
-      ref="fileInput"
-      accept="image/*"
-      type="file"
-      style="display: none" />
-    <v-card v-if="type !== 'edit'" color="primary lighten-4" flat class="d-flex justify-center mx-auto" max-width="500" height="180">
-      <div v-if="!imgUrl" class="align-self-center text-center">
-        <v-btn  @click="onPickFile" x-large icon color="primary" >
-          <v-icon>mdi-camera</v-icon>
-        </v-btn>
-        <p>Upload your image</p>
-      </div>
-      <v-img v-else :src="imgUrl" height="180"></v-img>
-    </v-card>
+    <v-text-field v-model="game.date" prepend-icon="mdi-calendar" type="date" label="Date" :rules="rules.date"></v-text-field>
+    <v-text-field v-model="game.time" prepend-icon="mdi-clock-time-eight-outline" type="time" label="Time" :rules="rules.time"></v-text-field>
+    <v-text-field v-model="game.spots" prepend-icon="mdi-account-group" type="number" label="Spots" :rules="rules.spots"></v-text-field>
+    <v-select v-model="game.skillLevel" prepend-icon="mdi-cog-outline" :items="skills" label="Skill Level"></v-select>
+    <v-file-input label="Choose Image" v-if="type !== 'edit'" v-model="image" :rules="rules.img" accept="image/*" chips @click:clear="imgUrl = ''"></v-file-input>
+    <v-expand-transition>
+      <v-card v-if="type !== 'edit' && imgUrl" color="primary lighten-4" flat class="d-flex justify-center mx-auto" max-width="500" height="180">
+        <v-img :src="imgUrl" height="180"></v-img>
+      </v-card>
+    </v-expand-transition>
     <v-subheader>Game description</v-subheader>
     <text-editor :desc="game.desc" @input="(newDesc) => { game.desc = newDesc }" />
-
     <v-select v-if="type === 'edit'" v-model="game.status" :value="game.status" :items="['scheduled','canceled']" label="Game status"></v-select>
-
     <div class="d-flex">
       <v-spacer></v-spacer>
       <v-btn v-if="type === 'edit'" class="mr-2"  @click="$emit('onClose')">Close</v-btn>
@@ -46,7 +35,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 import TextEditor from '../TextEditor'
 export default {
@@ -121,18 +110,28 @@ export default {
     }
   },
   methods: {
+    ...mapActions('snackbar', ['showSnack']),
     async createGame () {
       if (this.$refs.form.validate() && this.game.desc !== '') {
         const key = await this.$store.dispatch('createGame', { ...this.game, image: this.image })
         await this.$refs.form.reset()
         await this.$router.push(`/game/${key}`)
+        await this.showSnack({
+          text: 'Successfully Created!',
+          color: 'success',
+          timeout: 3500
+        })
       }
     },
     async updateGame () {
       if (this.$refs.form.validate()) {
         await this.$store.dispatch('updateGame', this.game)
-        this.$emit('onInput', 'update')
-        console.log(this.game)
+        this.$emit('onClose')
+        await this.showSnack({
+          text: 'Successfully Updated!',
+          color: 'success',
+          timeout: 3500
+        })
       }
     },
     async cancelGame () {
@@ -159,6 +158,7 @@ export default {
     }
   },
   mounted () {
+    console.log('mounted')
     if (this.type === 'edit') {
       this.game = this.gameById(this.$route.params.id)
     }

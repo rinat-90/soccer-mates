@@ -2,7 +2,7 @@
   <div>
     <v-hover v-slot:default="{ hover }">
       <div>
-        <v-img v-if="imgUrl" :src="imgUrl" :height="size" alt="">
+        <v-img v-if="imgUrl" :src="imgUrl" :lazy-src="imgUrl" aspect-ratio="1" :height="size" alt="">
           <v-expand-transition v-if="isCreator">
             <div
               v-if="hover"
@@ -10,12 +10,20 @@
               style="height: 100%; width: 100%; background: rgba(67, 160,72, 0.6);">
               <v-btn large @click="onPickFile" small dark text class="align-self-center">
                 <v-icon left>mdi-camera</v-icon>
-                <span>update</span>
+                <span>upload</span>
               </v-btn>
             </div>
           </v-expand-transition>
+          <template v-slot:placeholder>
+            <v-row
+              class="fill-height ma-0"
+              align="center"
+              justify="center"
+            >
+              <app-loader />
+            </v-row>
+          </template>
         </v-img>
-        <v-btn @click="onPickFile" text  v-if="!imgUrl" color="primary darken-1">add photo</v-btn>
       </div>
     </v-hover>
     <input
@@ -42,6 +50,9 @@ export default {
     },
     onFilePicked: {
       type: Function
+    },
+    loading: {
+      type: Boolean
     }
   },
   methods: {

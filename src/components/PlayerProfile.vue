@@ -1,5 +1,5 @@
 <template>
-  <v-layout row wrap>
+  <v-layout row wrap v-if="player">
     <v-card width="100%">
       <v-btn
         v-if="playerId === info.userId"
@@ -42,7 +42,7 @@
             <div v-if="editing">
               <div class="pa-3 primary lighten-5">
                 <div class="headline">My info</div>
-                <User-profile-form @onClose="editing = !editing" />
+                <user-profile-form @onClose="editing = !editing" />
               </div>
             </div>
           </v-expand-transition>
@@ -96,10 +96,11 @@
       </v-card-text>
     </v-card>
   </v-layout>
+  <app-loader v-else />
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import AppGamesList from '../components/AppGamesList'
 import UserProfileForm from './Forms/UserProfileForm'
 import moment from 'moment'
@@ -147,6 +148,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('snackbar', ['showSnack']),
     onPickFile () {
       this.$refs.fileInput.click()
     },
@@ -163,7 +165,12 @@ export default {
       })
       fileReader.readAsDataURL(files[0])
       this.image = files[0]
-      await this.$store.dispatch('uploadPhoto', this.image)
+      await this.$store.dispatch('uploadUserPhoto', this.image)
+      await this.showSnack({
+        text: 'Image successfully uploaded',
+        color: 'success',
+        timeout: 3500
+      })
     }
   }
 }

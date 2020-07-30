@@ -1,8 +1,7 @@
 <template>
-  <div>
-    <app-games-list v-if="sortedGames.length" :games="sortedGames" :type="'small'" />
-    <app-loader v-else />
-  </div>
+  <app-games-list v-if="sortedGames.length" :games="sortedGames" :type="'small'" />
+  <app-loader v-else-if="loading" />
+  <div v-else class="text-center">Currently, there are no games</div>
 </template>
 
 <script>

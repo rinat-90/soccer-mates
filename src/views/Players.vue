@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <v-row v-if="players.length">
     <v-col cols="6" sm="6" md="4" lg="2" v-for="player in players" :key="player.id">
       <v-card :to="info.userId !== player.id ? `/players/${player.id}` : `/profile`">
         <v-card-text class="text-center">
@@ -10,8 +10,8 @@
         </v-card-text>
       </v-card>
     </v-col>
-
   </v-row>
+  <app-loader v-else />
 </template>
 
 <script>
