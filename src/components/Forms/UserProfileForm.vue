@@ -70,8 +70,8 @@ export default {
         await this.$store.dispatch('updateUserInfo', this.userData)
         this.onClose()
         await this.showSnack({
-          text: 'Info successfully updated!',
-          color: 'success',
+          text: 'Profile info successfully updated!',
+          color: 'primary',
           timeout: 3500
         })
       }

@@ -1,200 +1,98 @@
 import firebase from 'firebase/app'
-import {
-  ADD_GAME,
-  CANCEL_GAME,
-  CLEAR_ERROR, CLEAR_GAMES,
-  JOIN_GAME,
-  SET_ERROR,
-  SET_GAMES,
-  SET_LOADING,
-  QUIT_GAME,
-  UPDATE_GAME, UPDATE_GAME_IMAGE
-} from '../types'
+import { db } from '../../firebase/firebaseInit'
+import { firestoreAction } from 'vuexfire'
+import { uploadImage } from './util/uploadImage'
+
 export default {
   state: {
     games: []
   },
   mutations: {
-    [SET_GAMES] (state, payload) {
-      state.games = payload
-    },
-    [ADD_GAME] (state, payload) {
-      state.games.push(payload)
-    },
-    [UPDATE_GAME] (state, payload) {
-      const games = [...state.games]
-      const indx = games.findIndex(g => g.id === payload.id)
-      if (indx >= 0) {
-        games[indx] = payload
-      }
-      state.games = games
-    },
-    [UPDATE_GAME_IMAGE] (state, { gameId, imgUrl }) {
-      const games = [...state.games]
-      const indx = games.findIndex(g => g.id === gameId)
-      if (indx >= 0) {
-        games[indx].imgUrl = imgUrl
-      }
-      state.games = games
-    },
-    [CANCEL_GAME] (state, id) {
-      const games = [...state.games]
-      const indx = games.findIndex(g => g.id === id)
-      if (indx >= 0) {
-        games[indx].status = 'canceled'
-      }
-      state.games = games
-    },
-    [QUIT_GAME] (state, { key, gameId }) {
-      const games = [...state.games]
-      const index = games.findIndex(g => g.id === gameId)
-      if (index >= 0) {
-        for (const k in games[index].going) {
-          if (k === key) {
-            delete games[index].going[k]
-          }
-        }
-      }
-      state.games = games
-    },
-    [JOIN_GAME] (state, { id, uid, key }) {
-      const games = [...state.games]
-      const index = games.findIndex(g => g.id === id)
-      if (index >= 0) {
-        games[index].going[key] = uid
-      }
-      state.games = games
-    },
-    [CLEAR_GAMES] (state) {
-      state.games = []
-    }
   },
   actions: {
-    async createGame ({ commit, dispatch }, game) {
+    bindGames: firestoreAction(async ({ bindFirestoreRef }) => {
+      return await bindFirestoreRef('games', db.collection('games'))
+    }),
+    unbindGames: firestoreAction(({ unbindFirestoreRef }) => {
+      unbindFirestoreRef('games')
+    }),
+    createGame: firestoreAction(async (context, payload) => {
+      // eslint-disable-next-line no-useless-catch
       try {
-        commit(CLEAR_ERROR)
-        commit(SET_LOADING, true)
-        const uid = await dispatch('getUid')
+        const { image, ...rest } = payload
+        const uid = await context.dispatch('getUid')
+        const creatorRef = db.collection('players').doc(uid)
+        const gamesRef = db.collection('games')
         const gameData = {
-          creatorId: uid,
           createdDate: Date.now(),
           going: [],
           status: 'scheduled',
-          ...game
+          creator: creatorRef,
+          ...rest
         }
-        const res = await firebase.database()
-          .ref('/games')
-          .push(gameData)
-
-        const filename = game.image.name
-        const ext = filename.slice(filename.lastIndexOf('.'))
-        const file = await firebase.storage().ref(`/games/${res.key}${ext}`).put(game.image)
-        const url = await file.ref.getDownloadURL()
-        await firebase.database().ref('/games').child(res.key).update({ imgUrl: url })
-
-        commit(ADD_GAME, { gameData })
-        commit(SET_LOADING, false)
-        return res.key
-      } catch (error) {
-        commit(SET_LOADING, false)
-        commit(SET_ERROR, error)
-        throw error
-      }
-    },
-    async fetchGames ({ commit }) {
-      try {
-        commit(CLEAR_ERROR)
-        commit(SET_LOADING, true)
-        const rowGames = (await firebase.database().ref('/games').once('value')).val() || {}
-        const games = Object.keys(rowGames).map(key => {
-          // console.log(rowGames[key]);
-          // console.log(rowGames[key].going);
-          if (rowGames[key].going) {
-            /// rowGames[key]['going'] = Object.values(rowGames[key]['going']);
-            return { ...rowGames[key], id: key }
-          } else {
-            return { ...rowGames[key], id: key, going: [] }
-          }
+        const res = await gamesRef.add(gameData)
+        const gameRef = gamesRef.doc(res.id)
+        await creatorRef.update({
+          games: firebase.firestore.FieldValue.arrayUnion(gameRef)
         })
-        commit(SET_GAMES, games)
-        commit(SET_LOADING, false)
-      } catch (error) {
-        commit(SET_LOADING, false)
-        commit(SET_ERROR, error)
-        throw error
+        const url = await uploadImage(image, 'games', res.id)
+        await gameRef.update({ imgUrl: url })
+        return res.id
+      } catch (e) {
+        throw e
       }
-    },
-    async join ({ commit, dispatch }, id) {
+    }),
+    updateGame: firestoreAction(async (context, { id, ...rest }) => {
+      // eslint-disable-next-line no-useless-catch
       try {
-        commit(CLEAR_ERROR)
-        commit(SET_LOADING, true)
-        const uid = await dispatch('getUid')
-        const res = await firebase.database().ref(`/games/${id}/going`).push(uid)
-        commit(JOIN_GAME, { id, uid, key: res.key })
-        commit(SET_LOADING, false)
-      } catch (error) {
-        commit(SET_LOADING, false)
-        commit(SET_ERROR, error)
-        throw error
+        return await db.collection('games').doc(id).update({ ...rest })
+      } catch (e) {
+        throw e
       }
-    },
-    async quit ({ commit, dispatch }, { gameId, key }) {
+    }),
+    join: firestoreAction(async (context, payload) => {
+      // eslint-disable-next-line no-useless-catch
       try {
-        commit(CLEAR_ERROR)
-        commit(SET_LOADING, true)
-        await firebase.database().ref('/games').child(gameId).child('going').child(key).remove()
-        commit(QUIT_GAME, { key, gameId })
-        commit(SET_LOADING, false)
-      } catch (error) {
-        commit(SET_LOADING, false)
-        commit(SET_ERROR, error)
-        throw error
+        const uid = await context.dispatch('getUid')
+        const playerRef = db.collection('players').doc(uid)
+        const gameRef = db.collection('games').doc(payload)
+        await playerRef.update({
+          games: firebase.firestore.FieldValue.arrayUnion(gameRef)
+        })
+        return await gameRef
+          .update({
+            going: firebase.firestore.FieldValue.arrayUnion(playerRef)
+          })
+      } catch (e) {
+        throw e
       }
-    },
-    async updateGame ({ commit }, game) {
+    }),
+    quit: firestoreAction(async (context, payload) => {
+      // eslint-disable-next-line no-useless-catch
       try {
-        commit(CLEAR_ERROR)
-        commit(SET_LOADING, true)
-        await firebase.database().ref('/games').child(game.id).update(game)
-        commit(UPDATE_GAME, game)
-        commit(SET_LOADING, false)
-      } catch (error) {
-        commit(SET_LOADING, false)
-        commit(SET_ERROR, error)
-        throw error
+        const uid = await context.dispatch('getUid')
+        const playerRef = db.collection('players').doc(uid)
+        const gameRef = db.collection('games').doc(payload)
+        await playerRef.update({
+          games: firebase.firestore.FieldValue.arrayRemove(gameRef)
+        })
+        return await gameRef.update({
+          going: firebase.firestore.FieldValue.arrayRemove(playerRef)
+        })
+      } catch (e) {
+        throw e
       }
-    },
-    async cancelGame ({ commit }, id) {
+    }),
+    uploadGameImg: firestoreAction(async (context, { gameId, image }) => {
+      // eslint-disable-next-line no-useless-catch
       try {
-        commit(CLEAR_ERROR)
-        commit(SET_LOADING, true)
-        await firebase.database().ref('/games').child(id).update({ status: 'canceled' })
-        commit(CANCEL_GAME, id)
-        commit(SET_LOADING, false)
-      } catch (error) {
-        commit(SET_LOADING, false)
-        commit(SET_ERROR, error)
-        throw error
+        const url = await uploadImage(image, 'games', gameId)
+        const gameRef = db.collection('games').doc(gameId)
+        await gameRef.update({ imgUrl: url })
+      } catch (e) {
+        throw e
       }
-    },
-    async uploadGameImg ({ commit }, { gameId, image }) {
-      console.log(gameId, image)
-      try {
-        commit(CLEAR_ERROR)
-        commit(SET_LOADING, true)
-        const filename = image.name
-        const ext = filename.slice(filename.lastIndexOf('.'))
-        const file = await firebase.storage().ref(`/games/${gameId}${ext}`).put(image)
-        const url = await file.ref.getDownloadURL()
-        await firebase.database().ref('/games/').child(gameId).update({ imgUrl: url })
-        commit(UPDATE_GAME_IMAGE, { imgUrl: url, gameId })
-        commit(SET_LOADING, false)
-      } catch (error) {
-        commit(SET_LOADING, false)
-        commit(SET_ERROR, error)
-        throw error
-      }
-    }
+    })
   },
   getters: {
     games (state) {

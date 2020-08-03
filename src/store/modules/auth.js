@@ -8,7 +8,12 @@ export default {
         commit(SET_LOADING, true)
         await firebase.auth().createUserWithEmailAndPassword(email, password)
         const uid = await dispatch('getUid')
-        await firebase.database().ref(`/users/${uid}/info`).set({
+        // await firebase.database().ref(`/users/${uid}/info`).set({
+        //   email,
+        //   displayName,
+        //   imgUrl: ''
+        // })
+        await firebase.firestore().collection('players').doc(uid).set({
           email,
           displayName,
           imgUrl: ''
@@ -32,10 +37,11 @@ export default {
         throw error
       }
     },
-    async signOut ({ commit }) {
+    async signOut ({ commit, dispatch }) {
       await firebase.auth().signOut()
       commit(CLEAR_INFO)
-      commit(CLEAR_GAMES)
+      dispatch('unbindGames')
+      // commit(CLEAR_GAMES)
       commit(CLEAR_PLAYERS)
     },
     async updateEmail ({ commit }, email) {

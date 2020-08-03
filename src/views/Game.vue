@@ -1,8 +1,7 @@
 <template>
   <v-row>
     <v-col cols="12" sm="12" md="10" offset-md="1" ld="10" offset-lg="1">
-
-      <game-card v-if="$route.params.id" :game-id="$route.params.id" :type="'large'">
+      <game-card v-if="gameId" :game-id="$route.params.id" :type="'large'">
         <template #image="{ size, imgUrl, isCreator, onFilePicked }">
           <game-thumbnail :size="size" :img-url="imgUrl" :is-creator="isCreator" :on-file-picked="onFilePicked" />
         </template>
@@ -16,7 +15,7 @@
         <template #gameInfo="{ game, creator, roaster, subtitle }">
           <v-divider class="mt-2"></v-divider>
           <v-subheader class="font-weight-bold">Organizer</v-subheader>
-          <router-link :to="info.userId !== creator.id ? `/players/${creator.id}` : `/profile`">
+          <router-link :to="info.userId !== creator.userId ? `/player/${creator.userId}` : `/profile`">
             <game-organizer v-if="creator" :name="creator.displayName" :imgUrl="creator.imgUrl" />
           </router-link>
           <v-divider class="mt-2"></v-divider>
@@ -40,9 +39,8 @@
         </template>
       </game-card>
       <app-dialog title="Edit Game" :dialog="dialog" @onClose="dialog = !dialog">
-        <CreateGameForm :type="'edit'" @onClose="dialog = !dialog" @onInput="inputHandler"/>
+        <CreateGameForm :type="'edit'" @onClose="dialog = !dialog"/>
       </app-dialog>
-      <app-snackbar :text="text" :type="'success'" :snackbar="snackbar" @onDismiss="snackbar = !snackbar" />
     </v-col>
   </v-row>
 </template>
@@ -55,27 +53,15 @@ export default {
   components: { CreateGameForm },
   data () {
     return {
-      dialog: false,
-      snackbar: false,
-      text: ''
+      gameId: '',
+      dialog: false
     }
   },
   computed: {
     ...mapGetters(['error', 'loading', 'info'])
   },
-  methods: {
-    inputHandler (type) {
-      if (type === 'update') {
-        this.dialog = !this.dialog
-        this.text = 'Successfully updated'
-        this.snackbar = !this.snackbar
-      }
-      if (type === 'cancel-game') {
-        this.dialog = !this.dialog
-        this.text = 'The game has been canceled successfully'
-        this.snackbar = !this.snackbar
-      }
-    }
+  created () {
+    this.gameId = this.$route.params.id
   }
 }
 </script>

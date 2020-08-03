@@ -1,5 +1,5 @@
 <template>
-  <app-games-list v-if="sortedGames.length" :games="sortedGames" :type="'small'" />
+  <app-games-list v-if="games.length" :games="games" :type="'small'" />
   <app-loader v-else-if="loading" />
   <div v-else class="text-center">Currently, there are no games</div>
 </template>
@@ -10,9 +10,7 @@ import moment from 'moment'
 import { mapGetters } from 'vuex'
 export default {
   name: 'Home',
-  components: {
-    AppGamesList
-  },
+  components: { AppGamesList },
   metaInfo () {
     return {
       title: this.$title('Games')
@@ -32,17 +30,12 @@ export default {
           }).filter(game => game.status !== 'finished')
         : []
     }
-
-  },
-  methods: {
-    async updateGame (game) {
-      await this.$store.dispatch('updateGame', { id: game.id, status: 'finished' })
-    }
   },
   async mounted () {
     if (!this.games.length) {
-      await this.$store.dispatch('fetchGames')
+      await this.$store.dispatch('bindGames')
     }
   }
+
 }
 </script>

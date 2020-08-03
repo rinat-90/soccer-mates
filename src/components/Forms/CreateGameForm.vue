@@ -1,6 +1,6 @@
 <template>
   <v-form v-model="valid" ref="form">
-    <v-text-field v-model="game.title" label="Title" :rules="rules.title" prepend-icon="mdi-format-title"></v-text-field>
+    <v-text-field v-model="game.title" label="Title" :rules="rules.title" prepend-icon="mdi-format-text"></v-text-field>
     <vuetify-google-autocomplete
       v-model="game.address"
       ref="address"
@@ -8,14 +8,15 @@
       label="Location"
       placeholder=""
       :rules="rules.address"
-      prepend-icon="mdi-map-marker"
+      prepend-icon="mdi-map-marker-outline"
       :placechanged="setPlace"
     >
     </vuetify-google-autocomplete>
-    <v-text-field v-model="game.date" prepend-icon="mdi-calendar" type="date" label="Date" :rules="rules.date"></v-text-field>
+    <v-text-field v-model="game.date" prepend-icon="mdi-calendar-outline" type="date" label="Date" :rules="rules.date"></v-text-field>
     <v-text-field v-model="game.time" prepend-icon="mdi-clock-time-eight-outline" type="time" label="Time" :rules="rules.time"></v-text-field>
-    <v-text-field v-model="game.spots" prepend-icon="mdi-account-group" type="number" label="Spots" :rules="rules.spots"></v-text-field>
-    <v-select v-model="game.skillLevel" prepend-icon="mdi-cog-outline" :items="skills" label="Skill Level"></v-select>
+<!--    <v-text-field v-model="game.spots" prepend-icon="mdi-account-group-outline" type="number" label="Spots" :rules="rules.spots"></v-text-field>-->
+    <v-select label="Spots" v-model="game.spots" :value="game.spots" :items="spotOptions"  prepend-icon="mdi-account-group-outline"></v-select>
+    <v-select label="Skill Level" v-model="game.skillLevel"  :value="game.skillLevel" :items="skills" :rules="rules.skillLevel" prepend-icon="mdi-cog-outline"></v-select>
     <v-file-input label="Choose Image" v-if="type !== 'edit'" v-model="image" :rules="rules.img" accept="image/*" chips @click:clear="imgUrl = ''"></v-file-input>
     <v-expand-transition>
       <v-card v-if="type !== 'edit' && imgUrl" color="primary lighten-4" flat class="d-flex justify-center mx-auto" max-width="500" height="180">
@@ -28,7 +29,7 @@
     <div class="d-flex">
       <v-spacer></v-spacer>
       <v-btn v-if="type === 'edit'" class="mr-2"  @click="$emit('onClose')">Close</v-btn>
-      <v-btn v-if="type === 'edit'" color="primary" :disabled="!valid" :loading="loading" @click="updateGame">Update</v-btn>
+      <v-btn v-if="type === 'edit'" color="primary" :disabled="!valid" :loading="loading" @click="updateGame($route.params.id)">Update</v-btn>
       <v-btn v-else color="primary" :disabled="!valid" :loading="loading" @click="createGame">Create</v-btn>
     </div>
   </v-form>
@@ -54,8 +55,8 @@ export default {
         date: moment().format('YYYY-MM-DD'),
         time: null,
         desc: '',
-        spots: 2,
-        skillLevel: 'All Skills Level'
+        spots: 1,
+        skillLevel: ''
       },
       image: null,
       imgUrl: '',
@@ -77,18 +78,28 @@ export default {
         time: [
           v => !!v || 'Pick a time'
         ],
-        spots: [
-          v => !!v || 'This field required',
-          v => (this.goingPlayers.length ? v > this.goingPlayers.length : v > 1) || 'Invalid Number'
-        ],
         img: [
           v => !!v || 'Please add a thumbnail picture'
+        ],
+        skillLevel: [
+          v => !!v || 'Please choose skill level of the game'
         ]
       }
     }
   },
   computed: {
     ...mapGetters(['error', 'loading', 'gameById']),
+    spotOptions () {
+      const values = []
+      let i = 0
+      if (this.type === 'edit') {
+        i = this.game.going.length - 1
+      }
+      for (i; i < 100; i++) {
+        values.push((i + 1))
+      }
+      return values
+    },
     game: {
       get () {
         if (this.type === 'edit') {
@@ -104,32 +115,30 @@ export default {
       set (game) {
         return game
       }
-    },
-    goingPlayers () {
-      return this.type === 'edit' && this.game ? Object.values(this.game.going) : []
     }
   },
   methods: {
     ...mapActions('snackbar', ['showSnack']),
     async createGame () {
-      if (this.$refs.form.validate() && this.game.desc !== '') {
-        const key = await this.$store.dispatch('createGame', { ...this.game, image: this.image })
+      if (this.game.desc !== '' && this.$refs.form.validate()) {
+        const id = await this.$store.dispatch('createGame', { ...this.game, image: this.image })
         await this.$refs.form.reset()
-        await this.$router.push(`/game/${key}`)
+        await this.$router.push(`/game/${id}`)
         await this.showSnack({
-          text: 'Successfully Created!',
-          color: 'success',
+          text: 'Game successfully created!',
+          color: 'primary',
           timeout: 3500
         })
       }
     },
-    async updateGame () {
+    async updateGame (id) {
       if (this.$refs.form.validate()) {
-        await this.$store.dispatch('updateGame', this.game)
+        const { creator, going, ...rest } = this.game
+        await this.$store.dispatch('updateGame', { ...rest, id })
         this.$emit('onClose')
         await this.showSnack({
-          text: 'Successfully Updated!',
-          color: 'success',
+          text: ' Game successfully updated!',
+          color: 'primary',
           timeout: 3500
         })
       }
@@ -158,7 +167,6 @@ export default {
     }
   },
   mounted () {
-    console.log('mounted')
     if (this.type === 'edit') {
       this.game = this.gameById(this.$route.params.id)
     }

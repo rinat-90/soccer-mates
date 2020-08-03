@@ -1,10 +1,10 @@
 <template>
   <v-form v-model="valid" ref="form">
-    <v-text-field v-model="newUser.displayName" label="Display Name" :rules="rules.displayName"></v-text-field>
-    <v-text-field v-model="newUser.email" label="Email" :rules="rules.email"></v-text-field>
-    <v-text-field v-model="newUser.password" type="password" label="Password" :rules="rules.password"></v-text-field>
-    <v-text-field v-model="newUser.confirmedPassword" type="password" label="Confirm Password" :rules="rules.confirmPassword"></v-text-field>
-    <v-btn :loading="loading" :disabled="!valid" color="primary" @click="register">Register</v-btn>
+    <v-text-field v-model="newUser.displayName" label="Display Name" :rules="rules.displayName" prepend-icon="mdi-account"></v-text-field>
+    <v-text-field v-model="newUser.email" label="Email" :rules="rules.email" prepend-icon="mdi-at"></v-text-field>
+    <v-text-field v-model="newUser.password" type="password" label="Password" :rules="rules.password" prepend-icon="mdi-lock"></v-text-field>
+    <v-text-field v-model="newUser.confirmedPassword" type="password" label="Confirm Password" :rules="rules.confirmPassword" prepend-icon="mdi-lock"></v-text-field>
+    <v-btn class="ml-8" :loading="loading" :disabled="!valid" color="primary" @click="register">Register</v-btn>
     <div class="mt-4 text-center">Already have an account? <router-link to="/signin">Sign in</router-link> </div>
   </v-form>
 </template>

@@ -1,9 +1,9 @@
 <template>
   <v-form v-model="valid" ref="form">
-    <v-text-field v-model="user.email" label="Email" :rules="rules.email"></v-text-field>
-    <v-text-field v-model="user.password" type="password" label="Password" :rules="rules.password"></v-text-field>
+    <v-text-field v-model="user.email" label="Email" :rules="rules.email" prepend-icon="mdi-account"></v-text-field>
+    <v-text-field v-model="user.password" type="password" label="Password" :rules="rules.password" prepend-icon="mdi-lock"></v-text-field>
     <div class="d-flex">
-      <v-btn :loading="loading" :disabled="!valid" color="primary" @click="signIn">Sign In</v-btn>
+      <v-btn class="ml-8" :loading="loading" :disabled="!valid" color="primary" @click="signIn">Sign In</v-btn>
       <v-spacer></v-spacer>
       <v-btn icon color="primary">
         <v-icon>mdi-google</v-icon>

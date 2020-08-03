@@ -1,20 +1,28 @@
 <template>
   <div name="snackbars">
-    <v-snackbar v-model="show" :color="color" :timeout="timeout" :top="'top'">
+    <v-snackbar v-model="show" :color="color" :timeout="timeout" :bottom="'bottom'" :right="'right'">
+      <v-icon left v-if="color === 'primary'" >mdi-check-circle</v-icon>
+      <v-icon left v-if="color === 'red'" >mdi-alert</v-icon>
       {{ text }}
-
-      <template v-slot:action="{ attrs }">
-        <v-btn dark text v-bind="attrs" @click="show = false">
+      <template #action="{ attrs }">
+        <v-btn dark small text v-bind="attrs" @click="show = false">
           Close
         </v-btn>
       </template>
     </v-snackbar>
   </div>
 </template>
-
 <script>
 export default {
   name: 'AppToast',
+  data () {
+    return {
+      show: false,
+      color: '',
+      text: '',
+      timeout: -1
+    }
+  },
   created () {
     this.$store.subscribe((mutation, state) => {
       if (mutation.type === 'snackbar/SHOW_MESSAGE') {
@@ -24,14 +32,6 @@ export default {
         this.show = true
       }
     })
-  },
-  data () {
-    return {
-      show: false,
-      color: '',
-      text: '',
-      timeout: -1
-    }
   }
 }
 </script>

@@ -1,8 +1,10 @@
-import firebase from 'firebase/app'
+import { db, storage } from '../../firebase/firebaseInit'
+import { uploadImage } from "./util/uploadImage";
 import { CLEAR_ERROR, CLEAR_INFO, SET_ERROR, SET_INFO, SET_LOADING, UPLOAD_INFO_PHOTO } from '../types'
 export default {
   state: {
-    info: {}
+    info: {},
+    info1: {}
   },
   mutations: {
     [SET_INFO] (state, info) {
@@ -21,8 +23,11 @@ export default {
         commit(CLEAR_ERROR)
         commit(SET_LOADING, true)
         const uid = await dispatch('getUid')
-        const res = (await firebase.database().ref(`/users/${uid}/info`).once('value')).val() || {}
+        // const res = (await firebase.database().ref(`/users/${uid}/info`).once('value')).val() || {}
+        const res = ((await db.collection('players').doc(uid).get()).data())
+        await dispatch('fetchPlayers')
         const info = { ...res, userId: uid }
+        // console.log(info)
         commit(SET_INFO, info)
         commit(SET_LOADING, false)
       } catch (error) {
@@ -34,10 +39,11 @@ export default {
     async updateUserInfo ({ commit, dispatch, getters }, userData) {
       try {
         const uid = await dispatch('getUid')
+        const playerRef = db.collection('players').doc(uid)
         if (getters.info.email !== userData.email) {
           await dispatch('updateEmail', userData.email)
         }
-        await firebase.database().ref(`/users/${uid}/info`).update(userData)
+        await playerRef.update(userData)
         commit(SET_INFO, userData)
       } catch (error) {
         commit(SET_ERROR, error)
@@ -49,11 +55,9 @@ export default {
         commit(CLEAR_ERROR)
         commit(SET_LOADING, true)
         const uid = await dispatch('getUid')
-        const filename = payload.name
-        const ext = filename.slice(filename.lastIndexOf('.'))
-        const file = await firebase.storage().ref(`/users/${uid}${ext}`).put(payload)
-        const url = await file.ref.getDownloadURL()
-        await firebase.database().ref('/users').child(`${uid}/info`).update({ imgUrl: url })
+        const playerRef = db.collection('players').doc(uid)
+        const url = await uploadImage(payload, 'players', uid)
+        await playerRef.update({ imgUrl: url })
         await dispatch('fetchPlayers')
         commit(UPLOAD_INFO_PHOTO, url)
         commit(SET_LOADING, false)
@@ -67,6 +71,9 @@ export default {
   getters: {
     info (state) {
       return state.info
+    },
+    info1 (state) {
+      return state.info1
     }
   }
 }

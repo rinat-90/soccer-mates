@@ -1,8 +1,5 @@
 <template>
-  <v-dialog
-    :value="dialog"
-    width="800"
-    @click:outside="$emit('onClose')">
+  <v-dialog :value="dialog" width="800" @click:outside="$emit('onClose')">
     <v-card>
       <v-toolbar dark color="primary">
         <span>{{ title }}</span>

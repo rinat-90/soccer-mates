@@ -8,7 +8,7 @@
               v-if="hover"
               class="d-flex justify-center transition-fast-in-fast-out lighten-2  v-card--reveal  white--text"
               style="height: 100%; width: 100%; background: rgba(67, 160,72, 0.6);">
-              <v-btn large @click="onPickFile" small dark text class="align-self-center">
+              <v-btn large @click="$refs.fileInput.click()" small dark text class="align-self-center">
                 <v-icon left>mdi-camera</v-icon>
                 <span>upload</span>
               </v-btn>
@@ -53,11 +53,6 @@ export default {
     },
     loading: {
       type: Boolean
-    }
-  },
-  methods: {
-    onPickFile () {
-      this.$refs.fileInput.click()
     }
   }
 }

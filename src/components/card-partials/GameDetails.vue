@@ -6,7 +6,7 @@
     </div>
     <div class="mb-1">
       <v-icon>mdi-calendar-clock</v-icon>
-      <span class="ml-2">{{ date | date('date') }}, at {{ getTime }}</span>
+      <span v-if="getTime" class="ml-2">{{ date | date('date') }}, at {{ getTime }}</span>
     </div>
     <div>
       <v-icon>mdi-cog</v-icon>
@@ -22,7 +22,7 @@ export default {
   props: ['address', 'date', 'time', 'skill'],
   computed: {
     getTime () {
-      return moment(this.time, 'h:mm').format('hh:mm A')
+      return this.time ? moment(this.time, 'h:mm').format('hh:mm A') : ''
     }
   }
 }

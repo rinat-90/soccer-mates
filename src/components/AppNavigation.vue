@@ -33,26 +33,13 @@
         <b>SOCCER MATES</b>
       </v-toolbar-title>
     </v-app-bar>
-<!--    <v-list-item v-if="info">-->
-<!--      <v-list-item-avatar>-->
-<!--        <v-img src="https://randomuser.me/api/portraits/men/78.jpg"></v-img>-->
-<!--      </v-list-item-avatar>-->
-
-<!--      <v-list-item-content>-->
-<!--        <v-list-item-title>{{ info.displayName }}</v-list-item-title>-->
-<!--      </v-list-item-content>-->
-<!--    </v-list-item>-->
-
     <v-divider></v-divider>
-
     <v-list>
-
       <v-list-item
         v-for="item in links"
         :key="item.title"
         link
-        :to="item.path"
-      >
+        :to="item.path">
         <v-list-item-icon>
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-item-icon>

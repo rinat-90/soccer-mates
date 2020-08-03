@@ -1,0 +1,14 @@
+import config from './config'
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/database'
+import 'firebase/firestore'
+import 'firebase/storage'
+import 'firebase/messaging'
+
+firebase.initializeApp(config)
+
+export const auth = firebase.auth()
+export const db = firebase.firestore()
+export const dbRef = firebase.database()
+export const storage = firebase.storage()
