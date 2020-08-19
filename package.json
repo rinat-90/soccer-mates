@@ -12,6 +12,7 @@
     "@vue/composition-api": "^1.0.0-beta.6",
     "core-js": "^3.6.5",
     "firebase": "^7.15.4",
+    "lodash": "^4.17.19",
     "moment": "^2.27.0",
     "register-service-worker": "^1.7.1",
     "tiptap-vuetify": "^2.23.0",

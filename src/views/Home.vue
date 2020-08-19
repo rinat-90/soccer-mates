@@ -1,23 +1,31 @@
 <template>
-  <app-games-list v-if="games.length" :games="games" :type="'small'" />
-  <app-loader v-else-if="loading" />
-  <div v-else class="text-center">Currently, there are no games</div>
+  <div>
+    <top-bar>
+      <template #title>
+        <v-toolbar-title><b>SOCCER MATES</b></v-toolbar-title>
+      </template>
+    </top-bar>
+    <app-games-list v-if="sortedGames.length" :games="sortedGames" :type="'small'" />
+    <app-loader v-else-if="loading" />
+    <div v-else class="text-center">Currently, there are no games</div>
+  </div>
 </template>
 
 <script>
 import AppGamesList from '../components/AppGamesList'
+import TopBar from '@/components/TopBar'
 import moment from 'moment'
 import { mapGetters } from 'vuex'
 export default {
   name: 'Home',
-  components: { AppGamesList },
+  components: {TopBar, AppGamesList },
   metaInfo () {
     return {
       title: this.$title('Games')
     }
   },
   computed: {
-    ...mapGetters(['error', 'loading', 'games']),
+    ...mapGetters(['error', 'loading', 'games', 'info']),
     sortedGames () {
       return this.games.length
         ? this.games
@@ -33,7 +41,7 @@ export default {
   },
   async mounted () {
     if (!this.games.length) {
-      await this.$store.dispatch('bindGames')
+      await this.$store.dispatch('fetchGames')
     }
   }
 

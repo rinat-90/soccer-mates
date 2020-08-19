@@ -4,12 +4,12 @@
       <v-row>
         <v-col
           sm="12" md="6" lg="4" cols="12"
-          v-for="(game, i) in games" :key="game.id">
+          v-for="(game, i) in games" :key="i">
 
-          <game-card :game-id="game.id" :type="type" :gameOrganizer="gameOrganizer">
+          <game-card v-if="game.id"  :game-id="game.id" :type="type" :gameOrganizer="gameOrganizer">
 
             <template #organizer="{ creator }">
-              <game-organizer :name="creator.displayName" :img-url="creator.imgUrl" />
+              <game-organizer v-if="creator" :name="creator.displayName" :img-url="creator.imgUrl" />
             </template>
             <template #image="{ size, imgUrl }">
               <v-img v-if="imgUrl" :height="size" :src="imgUrl"></v-img>

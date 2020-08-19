@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { vuexfireMutations } from 'vuexfire'
 
 import auth from './modules/auth'
 import info from './modules/info'
@@ -17,7 +16,6 @@ export default new Vuex.Store({
     error: null
   },
   mutations: {
-    ...vuexfireMutations,
     [SET_LOADING] (state, payload) {
       state.loading = payload
     },

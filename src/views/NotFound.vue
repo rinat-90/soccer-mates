@@ -2,7 +2,7 @@
   <v-row>
     <v-col cols="12" lg="10" offset-lg="1">
       <v-row>
-        <v-card width="100%">
+        <v-card width="100%" height="calc(100vh - 100px)">
           <v-card-text>
             <div style="display: block;" class="text-center">
               <div class="headline mb-2">Page not found</div>

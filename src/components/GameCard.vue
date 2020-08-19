@@ -1,9 +1,9 @@
 <template>
-  <v-card v-if="game" :to="isRouter">
+  <v-card v-if="game != null" :to="isRouter">
     <div v-if="type === 'small'">
       <slot
         name="organizer"
-        :creator="game.creator" />
+        :creator="creator" />
     </div>
     <div>
       <slot
@@ -11,7 +11,7 @@
         :size="size"
         :is-creator="isCreator"
         :on-file-picked="onFilePicked"
-        :imgUrl="game.imgUrl" />
+        :imgUrl="gameImgUrl" />
     </div>
     <v-card-title>{{ game.title }}</v-card-title>
     <v-card-subtitle>
@@ -32,8 +32,8 @@
       <slot
         name="gameInfo"
         :game="game"
-        :creator="game.creator"
-        :roaster="game.going"
+        :creator="creator"
+        :roaster="roaster"
         :subtitle="spots" />
     </v-card-text>
     <v-card-actions v-if="type === 'large'">
@@ -74,17 +74,26 @@ export default {
     game () {
       return this.gameId ? this.gameById(this.gameId) : null
     },
+    creator () {
+      return this.gameId && this.game != null ? this.playerById(this.game.creatorId) : null
+    },
+    roaster () {
+      return this.game != null ? this.game.roaster.map(id => this.playerById(id)) : []
+    },
+    gameImgUrl () {
+      return this.game != null ? this.game.imgUrl : ''
+    },
     isGoing () {
-      return this.game.going.length ? !!this.game.going.find(g => g.userId === this.info.userId) : false
+      return this.game && this.game.roaster.length ? !!this.game.roaster.find(id => id === this.info.userId) : false
     },
     isCreator () {
-      return this.game.creator != null ? this.game.creator.userId === this.info.userId : false
+      return this.game != null ? this.game.creatorId === this.info.userId : false
     },
     isCanceled () {
       return this.game.status === 'canceled'
     },
     isFilled () {
-      return +this.game.spots - this.game.going.length === 0
+      return +this.game.spots - this.game.roaster.length === 0
     },
     isFinished () {
       return this.game.status === 'finished'
@@ -93,11 +102,11 @@ export default {
       return this.type === 'small' ? `/game/${this.game.id}` : ''
     },
     spots () {
-      return !this.game.going.length
+      return !this.game.roaster.length
         ? `${this.game.spots} spots left`
         : this.isFilled
           ? `${this.game.spots} going, All spots filled`
-          : `${this.game.going.length} going,  ${(+this.game.spots - this.game.going.length)} spots left`
+          : `${this.game.roaster.length} going,  ${(+this.game.spots - this.game.roaster.length)} spots left`
     },
     subtitle () {
       return this.type === 'small' ? this.spots : this.game.date
@@ -132,7 +141,7 @@ export default {
       })
       fileReader.readAsDataURL(files[0])
       this.image = files[0]
-      await this.$store.dispatch('uploadGameImg', {
+      await this.$store.dispatch('updateGameImage', {
         gameId: this.gameId,
         image: this.image
       })
@@ -143,20 +152,12 @@ export default {
       })
     }
   },
-  // watch: {
-  //   info (val) {
-  //     if (val) {
-  //       this.$store.dispatch('fetchPlayers')
-  //       this.$store.dispatch('fetchGames')
-  //     }
-  //   }
-  // },
   async mounted () {
     if (this.creator == null) {
       await this.$store.dispatch('fetchPlayers')
     }
     if (this.game == null) {
-      await this.$store.dispatch('bindGames')
+      await this.$store.dispatch('fetchGames')
     }
   }
 }

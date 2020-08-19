@@ -50,17 +50,17 @@
             <v-divider></v-divider>
             <div class="mt-4 d-flex justify-center">
               <div>
-                <span class="headline"><strong>{{ goingGames.length }}</strong></span><br>
+<!--                <span class="headline"><strong>{{ goingGames.length }}</strong></span><br>-->
                 <span>Attended</span>
               </div>
               <div class="ml-5">
-                <span class="headline"><strong>{{ createdGames.length }}</strong></span><br>
+<!--                <span class="headline"><strong>{{ createdGames.length }}</strong></span><br>-->
                 <span>Organized</span>
               </div>
             </div>
           </div>
           <v-divider></v-divider>
-          <tabs v-if="games.length" :going-games="goingGames" :created-games="createdGames" :loading="loading" />
+          <tabs v-if="games.length" :going-games="goingGames" :created-games="[]" :loading="loading" />
         </v-card-text>
       </v-card>
     </v-row>
@@ -84,41 +84,31 @@ export default {
   data () {
     return {
       imgUrl: '',
-      tab: null,
-      items: ['Attending Games', 'Organized Games'],
       editing: false
     }
   },
   async mounted () {
     if (!this.games.length) {
-      await this.$store.dispatch('bindGames')
+      await this.$store.dispatch('fetchGames')
     }
     if (this.player == null) {
-      await this.$store.dispatch('bindPlayers')
+      await this.$store.dispatch('fetchPlayers')
     }
   },
   computed: {
-    ...mapGetters(['loading', 'error', 'playerById', 'info', 'games']),
+    ...mapGetters(['loading', 'error', 'playerById', 'info', 'goingGames', 'games']),
     player () {
       return this.playerId !== this.info.userId ? this.playerById(this.playerId) : this.info
     },
-    createdGames () {
-      return this.games.length
-        ? this.games.filter(g => g.creator.userId === this.info.userId)
-          .sort((a, b) => moment(`${b.date}${b.time}`, 'YYYY-MM-DD h:mma') - moment(`${a.date}${a.time}`, 'YYYY-MM-DD h:mma'))
-        : []
-    },
-    goingGames () {
-      const games = []
-      this.games.map(g => {
-        g.going.map(p => {
-          if (p.userId === this.info.userId) {
-            games.push(g)
-          }
-        })
-      })
-      return games
-    }
+    // createdGames () {
+    //   return this.userGames.length
+    //     ? this.userGames.filter(g => g.creator.userId === this.info.userId)
+    //       .sort((a, b) => moment(`${b.date}${b.time}`, 'YYYY-MM-DD h:mma') - moment(`${a.date}${a.time}`, 'YYYY-MM-DD h:mma'))
+    //     : []
+    // },
+    // goingGames () {
+    //   return this.userGames.length ? this.userGames : []
+    // }
   },
   methods: {
     ...mapActions('snackbar', ['showSnack']),

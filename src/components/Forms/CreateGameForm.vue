@@ -1,5 +1,5 @@
 <template>
-  <v-form v-model="valid" ref="form">
+  <v-form v-model="valid" ref="form" v-if="game">
     <v-text-field v-model="game.title" label="Title" :rules="rules.title" prepend-icon="mdi-format-text"></v-text-field>
     <vuetify-google-autocomplete
       v-model="game.address"
@@ -14,7 +14,6 @@
     </vuetify-google-autocomplete>
     <v-text-field v-model="game.date" prepend-icon="mdi-calendar-outline" type="date" label="Date" :rules="rules.date"></v-text-field>
     <v-text-field v-model="game.time" prepend-icon="mdi-clock-time-eight-outline" type="time" label="Time" :rules="rules.time"></v-text-field>
-<!--    <v-text-field v-model="game.spots" prepend-icon="mdi-account-group-outline" type="number" label="Spots" :rules="rules.spots"></v-text-field>-->
     <v-select label="Spots" v-model="game.spots" :value="game.spots" :items="spotOptions"  prepend-icon="mdi-account-group-outline"></v-select>
     <v-select label="Skill Level" v-model="game.skillLevel"  :value="game.skillLevel" :items="skills" :rules="rules.skillLevel" prepend-icon="mdi-cog-outline"></v-select>
     <v-file-input label="Choose Image" v-if="type !== 'edit'" v-model="image" :rules="rules.img" accept="image/*" chips @click:clear="imgUrl = ''"></v-file-input>
@@ -93,7 +92,7 @@ export default {
       const values = []
       let i = 0
       if (this.type === 'edit') {
-        i = this.game.going.length - 1
+        i = this.game.going.length || 0
       }
       for (i; i < 100; i++) {
         values.push((i + 1))
@@ -133,8 +132,7 @@ export default {
     },
     async updateGame (id) {
       if (this.$refs.form.validate()) {
-        const { creator, going, ...rest } = this.game
-        await this.$store.dispatch('updateGame', { ...rest, id })
+        await this.$store.dispatch('updateGame', this.game)
         this.$emit('onClose')
         await this.showSnack({
           text: ' Game successfully updated!',

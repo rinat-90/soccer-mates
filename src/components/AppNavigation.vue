@@ -68,6 +68,7 @@ export default {
   name: 'Navigation',
   data () {
     return {
+      tab: 'tab-1',
       drawer: false,
       links: [
         { title: 'Games', path: '/', icon: 'mdi-soccer' },

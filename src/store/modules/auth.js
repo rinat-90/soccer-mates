@@ -1,19 +1,19 @@
-import firebase from 'firebase/app'
-import {CLEAR_ERROR, SET_ERROR, SET_LOADING, CLEAR_INFO, CLEAR_GAMES, CLEAR_PLAYERS} from '../types'
+import { auth, db } from '../../firebase/firebaseInit'
+import { CLEAR_ERROR, SET_ERROR, SET_LOADING, CLEAR_INFO, CLEAR_PLAYERS } from '../types'
 export default {
   actions: {
     async register ({ commit, dispatch }, { email, password, displayName }) {
       try {
         commit(CLEAR_ERROR)
         commit(SET_LOADING, true)
-        await firebase.auth().createUserWithEmailAndPassword(email, password)
+        await auth.createUserWithEmailAndPassword(email, password)
         const uid = await dispatch('getUid')
         // await firebase.database().ref(`/users/${uid}/info`).set({
         //   email,
         //   displayName,
         //   imgUrl: ''
         // })
-        await firebase.firestore().collection('players').doc(uid).set({
+        await db.collection('players').doc(uid).set({
           email,
           displayName,
           imgUrl: ''
@@ -29,7 +29,7 @@ export default {
       try {
         commit(CLEAR_ERROR)
         commit(SET_LOADING, true)
-        await firebase.auth().signInWithEmailAndPassword(email, password)
+        await auth.signInWithEmailAndPassword(email, password)
         commit(SET_LOADING, false)
       } catch (error) {
         commit(SET_LOADING, false)
@@ -38,7 +38,7 @@ export default {
       }
     },
     async signOut ({ commit, dispatch }) {
-      await firebase.auth().signOut()
+      await auth.signOut()
       commit(CLEAR_INFO)
       dispatch('unbindGames')
       // commit(CLEAR_GAMES)
@@ -46,7 +46,7 @@ export default {
     },
     async updateEmail ({ commit }, email) {
       try {
-        const user = firebase.auth().currentUser
+        const user = auth.currentUser
         if (user) {
           await user.updateEmail(email)
         }
@@ -57,7 +57,7 @@ export default {
       }
     },
     getUid () {
-      const user = firebase.auth().currentUser
+      const user = auth.currentUser
       return user ? user.uid : null
     }
   }

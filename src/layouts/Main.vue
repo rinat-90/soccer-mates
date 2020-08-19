@@ -1,34 +1,31 @@
 <template>
   <div>
-    <app-navigation />
+<!--    <app-navigation />-->
     <v-container>
       <app-toast />
       <router-view />
     </v-container>
+    <bottom-nav />
   </div>
 
 </template>
 
 <script>
 import AppNavigation from '../components/AppNavigation'
+import BottomNav from "@/components/BottomNav";
 import { mapGetters } from 'vuex'
 import messages from '../utils/messages'
 export default {
   name: 'Main',
-  components: { AppNavigation },
+  components: { AppNavigation, BottomNav },
   computed: {
-    ...mapGetters(['error', 'info', 'info1', 'loading'])
+    ...mapGetters(['error', 'info', 'loading'])
   },
   async mounted () {
     if (!Object.keys(this.info).length) {
       await this.$store.dispatch('fetchInfo')
     }
   },
-  // created () {
-  //   if (!Object.keys(this.info1).length) {
-  //     this.$store.dispatch('bindInfo')
-  //   }
-  // },
   watch: {
     error (val) {
       if (val) {

@@ -1,10 +1,9 @@
-import { db, storage } from '../../firebase/firebaseInit'
-import { uploadImage } from "./util/uploadImage";
+import { db } from '../../firebase/firebaseInit'
+import { uploadImage } from './util/helper'
 import { CLEAR_ERROR, CLEAR_INFO, SET_ERROR, SET_INFO, SET_LOADING, UPLOAD_INFO_PHOTO } from '../types'
 export default {
   state: {
-    info: {},
-    info1: {}
+    info: {}
   },
   mutations: {
     [SET_INFO] (state, info) {
@@ -15,6 +14,12 @@ export default {
     },
     [UPLOAD_INFO_PHOTO] (state, payload) {
       state.info.imgUrl = payload
+    },
+    USER_JOIN_GAME (state, gameId) {
+      state.info.games.push(gameId)
+    },
+    USER_QUIT_GAME (state, gameId) {
+      state.info.games = state.info.games.filter(id => id !== gameId)
     }
   },
   actions: {
@@ -23,11 +28,8 @@ export default {
         commit(CLEAR_ERROR)
         commit(SET_LOADING, true)
         const uid = await dispatch('getUid')
-        // const res = (await firebase.database().ref(`/users/${uid}/info`).once('value')).val() || {}
-        const res = ((await db.collection('players').doc(uid).get()).data())
-        await dispatch('fetchPlayers')
-        const info = { ...res, userId: uid }
-        // console.log(info)
+        const user = ((await db.collection('players').doc(uid).get()).data())
+        const info = { ...user, userId: uid }
         commit(SET_INFO, info)
         commit(SET_LOADING, false)
       } catch (error) {
@@ -44,6 +46,7 @@ export default {
           await dispatch('updateEmail', userData.email)
         }
         await playerRef.update(userData)
+        await dispatch('fetchPlayers')
         commit(SET_INFO, userData)
       } catch (error) {
         commit(SET_ERROR, error)
@@ -72,8 +75,10 @@ export default {
     info (state) {
       return state.info
     },
-    info1 (state) {
-      return state.info1
+    goingGames (state, getters) {
+      return state.info.games.map(id => {
+        return getters.gameById(id)
+      })
     }
   }
 }
