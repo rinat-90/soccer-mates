@@ -10,54 +10,60 @@ const routes = [
     path: '/',
     name: 'All games',
     component: Home,
-    meta: { layout: 'main', auth: true }
+    meta: { layout: 'main', auth: true, bottomNav: true }
+  },
+  {
+    path: '/my-games',
+    name: 'My games',
+    component: () => import('../views/MyGames.vue'),
+    meta: { layout: 'main', auth: true, bottomNav: true }
   },
   {
     path: '/signin',
     name: 'Sign in',
-    meta: { layout: 'empty' },
+    meta: { layout: 'empty', bottomNav: false },
     component: () => import('../views/SignIn.vue')
   },
   {
     path: '/register',
     name: 'Register',
-    meta: { layout: 'empty' },
+    meta: { layout: 'empty', bottomNav: false },
     component: () => import('../views/Register.vue')
   },
   {
     path: '/players',
     name: 'Players',
-    meta: { layout: 'main', auth: true },
+    meta: { layout: 'main', auth: true, bottomNav: true },
     component: () => import('../views/Players.vue')
   },
   {
     path: '/player/:id',
     name: 'Player',
-    meta: { layout: 'main', auth: true },
+    meta: { layout: 'main', auth: true, bottomNav: false },
     component: () => import('../views/Player.vue')
   },
   {
     path: '/profile',
     name: 'Profile',
-    meta: { layout: 'main', auth: true },
+    meta: { layout: 'main', auth: true, bottomNav: true },
     component: () => import('../views/Profile.vue')
   },
   {
     path: '/game/:id',
     name: 'Game',
-    meta: { layout: 'main', auth: true },
+    meta: { layout: 'main', auth: true, bottomNav: false },
     component: () => import('../views/Game.vue')
   },
   {
     path: '/create-game',
     name: 'Create Game',
-    meta: { layout: 'main', auth: true },
+    meta: { layout: 'main', auth: true, bottomNav: false },
     component: () => import('../views/CreateGame.vue')
   },
   {
     path: '*',
     name: '404: Page not found',
-    meta: { layout: 'main', auth: true },
+    meta: { layout: 'main', auth: true, bottomNav: false },
     component: () => import('../views/NotFound.vue')
   }
 

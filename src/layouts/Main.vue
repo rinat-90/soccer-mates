@@ -5,7 +5,7 @@
       <app-toast />
       <router-view />
     </v-container>
-    <bottom-nav />
+    <bottom-nav v-if="$route.meta.bottomNav" />
   </div>
 
 </template>

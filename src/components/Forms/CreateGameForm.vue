@@ -92,7 +92,7 @@ export default {
       const values = []
       let i = 0
       if (this.type === 'edit') {
-        i = this.game.going.length || 0
+        i = this.game.roaster.length || 0
       }
       for (i; i < 100; i++) {
         values.push((i + 1))

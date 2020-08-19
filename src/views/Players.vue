@@ -1,8 +1,10 @@
 <template>
   <div>
-    <v-app-bar app color="primary" dark>
-      <v-text-field v-model="searchVal" prepend-inner-icon="mdi-magnify" color="primary" placeholder="Search..."  class="mt-5" filled rounded dense ></v-text-field>
-    </v-app-bar>
+    <top-bar with-component>
+      <template #component>
+        <v-text-field v-model="searchVal" prepend-inner-icon="mdi-magnify" color="primary" placeholder="Search..."  class="mt-5" filled rounded dense ></v-text-field>
+      </template>
+    </top-bar>
     <v-row v-if="filteredPlayers.length">
       <v-col cols="12" lg="10" offset-lg="1">
         <v-row>
@@ -27,6 +29,7 @@
 import { mapGetters } from 'vuex'
 export default {
   name: 'Players',
+  components: {  },
   metaInfo () {
     return {
       title: this.$title('Players')

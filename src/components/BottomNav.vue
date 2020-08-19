@@ -1,5 +1,5 @@
 <template>
-  <v-bottom-navigation
+  <v-bottom-navigation v-if="show"
     app
     v-model="bottomNav"
     color="white"
@@ -19,9 +19,10 @@ export default {
   name: 'BottomNav',
   data () {
     return {
+      show: true,
       bottomNav: null,
       links: [
-        { route: '/games', icon: 'mdi-calendar', title: 'My games' },
+        { route: '/my-games', icon: 'mdi-calendar', title: 'My games' },
         { route: '/players', icon: 'mdi-account-group', title: 'Crew' },
         { route: '/', icon: 'mdi-soccer', title: 'Games' },
         { route: '/chats', icon: 'mdi-message', title: 'Messages' },

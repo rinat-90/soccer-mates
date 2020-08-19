@@ -9,6 +9,7 @@ import titlePlugin from './plugins/title.plugin'
 // import './plugins/gmap'
 import './plugins/vuetify-google-autocomplete'
 import dateFilter from './filters/dateFilter'
+import TopBar from '@/components/TopBar'
 import AppLoader from './components/AppLoader'
 import AppToast from './components/AppToast'
 import AppDialog from './components/AppDialog'
@@ -27,6 +28,7 @@ Vue.use(VueMeta)
 Vue.use(titlePlugin)
 Vue.use(CompositionApi)
 Vue.filter('date', dateFilter)
+Vue.component('top-bar', TopBar)
 Vue.component('app-loader', AppLoader)
 Vue.component('app-toast', AppToast)
 Vue.component('app-dialog', AppDialog)

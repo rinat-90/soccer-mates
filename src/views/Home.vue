@@ -1,10 +1,6 @@
 <template>
   <div>
-    <top-bar>
-      <template #title>
-        <v-toolbar-title><b>SOCCER MATES</b></v-toolbar-title>
-      </template>
-    </top-bar>
+    <top-bar  title="SOCCER CREW" />
     <app-games-list v-if="sortedGames.length" :games="sortedGames" :type="'small'" />
     <app-loader v-else-if="loading" />
     <div v-else class="text-center">Currently, there are no games</div>

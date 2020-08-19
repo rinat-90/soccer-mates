@@ -1,16 +1,17 @@
 <template>
-  <v-row>
-    <v-col cols="12" lg="10" offset-lg="1">
-      <v-card>
-        <v-card-title>
-          <div class="display-1  mx-auto">New Game Event</div>
-        </v-card-title>
-        <v-card-text>
-          <create-game-form type="new-game" />
-        </v-card-text>
-      </v-card>
-    </v-col>
-  </v-row>
+  <div>
+    <top-bar title="Create new game" with-actions with-back-btn>
+    </top-bar>
+    <v-row>
+      <v-col cols="12" lg="10" offset-lg="1">
+        <v-card>
+          <v-card-text>
+            <create-game-form type="new-game" />
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script>

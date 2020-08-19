@@ -1,55 +1,57 @@
 <template>
-  <v-card v-if="game != null" :to="isRouter">
-    <div v-if="type === 'small'">
-      <slot
-        name="organizer"
-        :creator="creator" />
-    </div>
-    <div>
-      <slot
-        name="image"
-        :size="size"
-        :is-creator="isCreator"
-        :on-file-picked="onFilePicked"
-        :imgUrl="gameImgUrl" />
-    </div>
-    <v-card-title>{{ game.title }}</v-card-title>
-    <v-card-subtitle>
-      <slot
-        name="subtitle"
-        :subtitle="subtitle"
-        :status="game.status" />
-    </v-card-subtitle>
-    <v-card-text>
-      <slot
-        name="gameDetails"
-        :address="game.address"
-        :skill="game.skillLevel"
-        :date="game.date"
-        :time="game.time" />
-    </v-card-text>
-    <v-card-text v-if="type === 'large'">
-      <slot
-        name="gameInfo"
-        :game="game"
-        :creator="creator"
-        :roaster="roaster"
-        :subtitle="spots" />
-    </v-card-text>
-    <v-card-actions v-if="type === 'large'">
-      <slot
-        name="gameActions"
-        :is-creator="isCreator"
-        :is-canceled="isCanceled"
-        :is-filled="isFilled"
-        :is-finished="isFinished"
-        :is-going="isGoing"
-        :loading="loading"
-        :join="join"
-        :quit="quit"/>
-    </v-card-actions>
-  </v-card>
-  <app-loader v-else />
+  <div>
+    <v-card v-if="game != null" :to="isRouter">
+      <div v-if="type === 'small'">
+        <slot
+          name="organizer"
+          :creator="creator" />
+      </div>
+      <div>
+        <slot
+          name="image"
+          :size="size"
+          :is-creator="isCreator"
+          :on-file-picked="onFilePicked"
+          :imgUrl="gameImgUrl" />
+      </div>
+      <v-card-title>{{ game.title }}</v-card-title>
+      <v-card-subtitle>
+        <slot
+          name="subtitle"
+          :subtitle="subtitle"
+          :status="game.status" />
+      </v-card-subtitle>
+      <v-card-text>
+        <slot
+          name="gameDetails"
+          :address="game.address"
+          :skill="game.skillLevel"
+          :date="game.date"
+          :time="game.time" />
+      </v-card-text>
+      <v-card-text v-if="type === 'large'">
+        <slot
+          name="gameInfo"
+          :game="game"
+          :creator="creator"
+          :roaster="roaster"
+          :subtitle="spots" />
+      </v-card-text>
+      <v-card-actions v-if="type === 'large'">
+        <slot
+          name="gameActions"
+          :is-creator="isCreator"
+          :is-canceled="isCanceled"
+          :is-filled="isFilled"
+          :is-finished="isFinished"
+          :is-going="isGoing"
+          :loading="loading"
+          :join="join"
+          :quit="quit"/>
+      </v-card-actions>
+    </v-card>
+    <app-loader v-else />
+  </div>
 </template>
 
 <script>
