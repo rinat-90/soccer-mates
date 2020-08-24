@@ -1,43 +1,44 @@
 <template>
   <div>
     <top-bar  title="SOCCER CREW" />
-    <app-games-list v-if="sortedGames.length" :games="sortedGames" :type="'small'" />
-    <app-loader v-else-if="loading" />
-    <div v-else class="text-center">Currently, there are no games</div>
+    <app-loader v-if="loading" />
+    <app-games-list v-if="games.length" :games="games" :type="'small'" />
+    <div v-if="!games.length && !loading" class="text-center">Currently, there are no games</div>
   </div>
 </template>
 
 <script>
 import AppGamesList from '../components/AppGamesList'
 import TopBar from '@/components/TopBar'
-import moment from 'moment'
-import { mapGetters } from 'vuex'
+import useGames from '@/composables/useGames'
+import { onMounted } from '@vue/composition-api'
 export default {
   name: 'Home',
-  components: {TopBar, AppGamesList },
+  components: { TopBar, AppGamesList },
   metaInfo () {
     return {
       title: this.$title('Games')
     }
   },
-  computed: {
-    ...mapGetters(['error', 'loading', 'games', 'info']),
-    sortedGames () {
-      return this.games.length
-        ? this.games
-          .sort((a, b) => moment(`${a.date}${a.time}`, 'YYYY-MM-DD h:mma') - moment(`${b.date}${b.time}`, 'YYYY-MM-DD h:mma'))
-          .map(game => {
-            if (moment(`${game.date}${game.time}`, 'YYYY-MM-DD h:mma') < moment(new Date(), 'YYYY-MM-DD h:mma')) {
-              // this.updateGame(game)
-            }
-            return game
-          }).filter(game => game.status !== 'finished')
-        : []
+  data () {
+    return {
+      loading: false,
+      games: []
     }
   },
   async mounted () {
-    if (!this.games.length) {
-      await this.$store.dispatch('fetchGames')
+    this.loading = true
+    this.games = await this.$store.dispatch('fetchGames')
+    this.loading = false
+  },
+  setup () {
+    const { games, getGames } = useGames()
+
+    onMounted(async () => {
+      await getGames()
+    })
+    return {
+      games1: games
     }
   }
 

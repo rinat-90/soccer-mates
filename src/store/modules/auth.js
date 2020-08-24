@@ -1,5 +1,5 @@
 import { auth, db } from '../../firebase/firebaseInit'
-import { CLEAR_ERROR, SET_ERROR, SET_LOADING, CLEAR_INFO, CLEAR_PLAYERS } from '../types'
+import { CLEAR_ERROR, CLEAR_GAMES, SET_ERROR, SET_LOADING, CLEAR_INFO, CLEAR_PLAYERS } from '../types'
 export default {
   actions: {
     async register ({ commit, dispatch }, { email, password, displayName }) {
@@ -40,8 +40,7 @@ export default {
     async signOut ({ commit, dispatch }) {
       await auth.signOut()
       commit(CLEAR_INFO)
-      dispatch('unbindGames')
-      // commit(CLEAR_GAMES)
+      commit(CLEAR_GAMES)
       commit(CLEAR_PLAYERS)
     },
     async updateEmail ({ commit }, email) {

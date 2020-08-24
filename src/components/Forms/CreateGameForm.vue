@@ -1,49 +1,199 @@
 <template>
-  <v-form v-model="valid" ref="form" v-if="game">
-    <v-text-field v-model="game.title" label="Title" :rules="rules.title" prepend-icon="mdi-format-text"></v-text-field>
+  <v-form v-model="valid" ref="form">
+    <v-text-field
+      v-model="game.title"
+      :rules="rules.title"
+      label="Title"
+      type="text"
+      append-icon="mdi-format-text"
+      filled>
+    </v-text-field>
     <vuetify-google-autocomplete
       v-model="game.address"
+      :rules="rules.address"
+      :placechanged="setPlace"
+      label="Location"
       ref="address"
       id="map"
-      label="Location"
       placeholder=""
-      :rules="rules.address"
-      prepend-icon="mdi-map-marker-outline"
-      :placechanged="setPlace"
-    >
+      append-icon="mdi-map-marker-outline"
+      filled>
     </vuetify-google-autocomplete>
-    <v-text-field v-model="game.date" prepend-icon="mdi-calendar-outline" type="date" label="Date" :rules="rules.date"></v-text-field>
-    <v-text-field v-model="game.time" prepend-icon="mdi-clock-time-eight-outline" type="time" label="Time" :rules="rules.time"></v-text-field>
-    <v-select label="Spots" v-model="game.spots" :value="game.spots" :items="spotOptions"  prepend-icon="mdi-account-group-outline"></v-select>
-    <v-select label="Skill Level" v-model="game.skillLevel"  :value="game.skillLevel" :items="skills" :rules="rules.skillLevel" prepend-icon="mdi-cog-outline"></v-select>
-    <v-file-input label="Choose Image" v-if="type !== 'edit'" v-model="image" :rules="rules.img" accept="image/*" chips @click:clear="imgUrl = ''"></v-file-input>
+<!--    date-->
+    <v-menu
+      ref="menu"
+      v-model="menu"
+      :close-on-content-click="false"
+      :return-value.sync="game.date"
+      transition="scale-transition"
+      offset-y
+      min-width="290px"
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-text-field
+          v-model="game.date"
+          :rules="rules.date"
+          label="Date"
+          append-icon="mdi-calendar-outline"
+          v-bind="attrs"
+          v-on="on"
+          readonly
+          filled
+        ></v-text-field>
+      </template>
+      <v-date-picker v-model="game.date" no-title scrollable color="primary" header-color="primary">
+        <v-spacer></v-spacer>
+        <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+        <v-btn text color="primary" @click="$refs.menu.save(game.date)">OK</v-btn>
+      </v-date-picker>
+    </v-menu>
+<!--    start time-->
+    <v-menu
+      ref="menu2"
+      v-model="menu2"
+      :close-on-content-click="false"
+      :nudge-right="40"
+      :return-value.sync="game.time"
+      transition="scale-transition"
+      offset-y
+      max-width="290px"
+      min-width="290px"
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-text-field
+          v-model="game.startTime"
+          :rules="rules.startTime"
+          label="Start Time"
+          append-icon="mdi-clock-time-eight-outline"
+          v-bind="attrs"
+          v-on="on"
+          readonly
+          filled
+        ></v-text-field>
+      </template>
+      <v-time-picker
+        v-if="menu2"
+        format="ampm"
+        v-model="game.startTime"
+        color="primary"
+        full-width
+        @click:minute="$refs.menu2.save(game.startTime)"
+      ></v-time-picker>
+    </v-menu>
+<!--    end time-->
+    <v-menu
+      ref="menu3"
+      v-model="menu3"
+      :close-on-content-click="false"
+      :nudge-right="40"
+      :return-value.sync="game.time"
+      transition="scale-transition"
+      offset-y
+      max-width="290px"
+      min-width="290px"
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-text-field
+          v-model="game.endTime"
+          :rules="rules.endTime"
+          label="End Time"
+          append-icon="mdi-clock-time-eight-outline"
+          v-bind="attrs"
+          v-on="on"
+          readonly
+          filled
+        ></v-text-field>
+      </template>
+      <v-time-picker
+        v-if="menu3"
+        format="ampm"
+        v-model="game.endTime"
+        color="primary"
+        full-width
+        @click:minute="$refs.menu3.save(game.endTime)"
+      ></v-time-picker>
+    </v-menu>
+    <v-select
+      v-model="game.spots"
+      :value="game.spots"
+      :items="spotOptions"
+      label="Spots"
+      append-icon="mdi-account-group-outline"
+      filled>
+    </v-select>
+    <v-select
+      v-model="game.skillLevel"
+      :value="game.skillLevel"
+      :items="skills"
+      :rules="rules.skillLevel"
+      label="Skill Level"
+      append-icon="mdi-cog-outline"
+      filled>
+    </v-select>
+    <v-file-input
+      v-if="type !== 'edit-game'"
+      v-model="image"
+      @click:clear="imgUrl = ''"
+      :rules="rules.img" accept="image/*"
+      label="Choose Image"
+      prepend-icon=""
+      append-icon="mdi-attachment"
+      filled
+      chips>
+    </v-file-input>
     <v-expand-transition>
-      <v-card v-if="type !== 'edit' && imgUrl" color="primary lighten-4" flat class="d-flex justify-center mx-auto" max-width="500" height="180">
+      <v-card
+        v-if="type !== 'edit-game' && imgUrl"
+        color="primary lighten-4"
+        class="d-flex justify-center mx-auto mb-3"
+        max-width="500"
+        height="180"
+        flat>
         <v-img :src="imgUrl" height="180"></v-img>
       </v-card>
     </v-expand-transition>
-    <v-subheader>Game description</v-subheader>
-    <text-editor :desc="game.desc" @input="(newDesc) => { game.desc = newDesc }" />
-    <v-select v-if="type === 'edit'" v-model="game.status" :value="game.status" :items="['scheduled','canceled']" label="Game status"></v-select>
-    <div class="d-flex">
-      <v-spacer></v-spacer>
-      <v-btn v-if="type === 'edit'" class="mr-2"  @click="$emit('onClose')">Close</v-btn>
-      <v-btn v-if="type === 'edit'" color="primary" :disabled="!valid" :loading="loading" @click="updateGame($route.params.id)">Update</v-btn>
-      <v-btn v-else color="primary" :disabled="!valid" :loading="loading" @click="createGame">Create</v-btn>
-    </div>
+    <v-textarea
+      v-model="game.desc"
+      :rules="rules.desc"
+      label="About the game"
+      append-icon="mdi-information-outline"
+      filled>
+    </v-textarea>
+    <v-bottom-navigation app color="white" dark background-color="primary">
+      <v-btn
+        v-if="type === 'new-game'"
+        @click="createGame"
+        :disabled="!valid"
+        :loading="loading"
+        color="primary"
+        block>
+        Create
+      </v-btn>
+      <v-btn
+        v-else
+        @click="updateGame(game.id)"
+        :disabled="!valid"
+        :loading="loading"
+        color="primary"
+        block>
+        Update
+      </v-btn>
+    </v-bottom-navigation>
   </v-form>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
-import TextEditor from '../TextEditor'
+import dateFilter from "@/filters/dateFilter";
 export default {
   name: 'CreateGameForm',
-  components: { TextEditor },
-  props: ['type'],
+  props: ['type', 'gameData'],
   data () {
     return {
+      menu: false,
+      menu2: false,
+      menu3: false,
       valid: false,
       skills: ['All skills level', 'Beginner', 'Intermediate', 'Advanced'],
       statuses: ['scheduled', 'canceled', 'postponed'],
@@ -52,6 +202,8 @@ export default {
         location: '',
         address: '',
         date: moment().format('YYYY-MM-DD'),
+        startTime: '',
+        endTime: '',
         time: null,
         desc: '',
         spots: 1,
@@ -77,6 +229,12 @@ export default {
         time: [
           v => !!v || 'Pick a time'
         ],
+        startTime: [
+          v => !!v || 'Pick a time'
+        ],
+        endTime: [
+          v => !!v || 'Pick a time'
+        ],
         img: [
           v => !!v || 'Please add a thumbnail picture'
         ],
@@ -87,7 +245,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['error', 'loading', 'gameById']),
+    ...mapGetters(['error', 'loading']),
+    formattedDate () {
+      return dateFilter(this.game.date)
+    },
     spotOptions () {
       const values = []
       let i = 0
@@ -101,9 +262,9 @@ export default {
     },
     game: {
       get () {
-        if (this.type === 'edit') {
+        if (this.type === 'edit-game') {
           return {
-            ...this.gameById(this.$route.params.id)
+            ...this.gameData
           }
         } else {
           return {
@@ -119,7 +280,7 @@ export default {
   methods: {
     ...mapActions('snackbar', ['showSnack']),
     async createGame () {
-      if (this.game.desc !== '' && this.$refs.form.validate()) {
+      if (this.$refs.form.validate()) {
         const id = await this.$store.dispatch('createGame', { ...this.game, image: this.image })
         await this.$refs.form.reset()
         await this.$router.push(`/game/${id}`)
@@ -132,8 +293,9 @@ export default {
     },
     async updateGame (id) {
       if (this.$refs.form.validate()) {
-        await this.$store.dispatch('updateGame', this.game)
-        this.$emit('onClose')
+        const { roaster, creator, ...rest } = this.game
+        await this.$store.dispatch('updateGame', rest)
+        await this.$router.push(`/game/${id}`)
         await this.showSnack({
           text: ' Game successfully updated!',
           color: 'primary',

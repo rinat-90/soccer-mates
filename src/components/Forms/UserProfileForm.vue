@@ -8,7 +8,6 @@
       color="primary"
       :value="userData.positions"
       @change="onChange"
-      attach
       chips
       label="Game Position"
       multiple
@@ -68,12 +67,12 @@ export default {
           this.userData.positions = this.userData.positions.filter(p => p !== 'Any')
         }
         await this.$store.dispatch('updateUserInfo', this.userData)
-        this.onClose()
         await this.showSnack({
           text: 'Profile info successfully updated!',
           color: 'primary',
           timeout: 3500
         })
+        this.$emit('onUpdateInfo')
       }
     }
   }

@@ -1,22 +1,25 @@
 <template>
   <v-col v-if="player" cols="12" lg="10" offset-lg="1">
-    <v-row>
-      <v-card width="100%">
-        <v-btn
-          v-if="playerId === info.userId"
-          @click="editing = !editing"
-          class="mx-2"
-          color="primary"
-          absolute
-          right
-          text
-          fab>
-          <v-icon dark>mdi-pencil</v-icon>
+    <top-bar :title="player.displayName" with-actions>
+      <template #left-actions>
+        <v-btn icon v-if="$route.path === '/profile'"  @click="sheet = !sheet">
+          <v-icon>mdi-pencil</v-icon>
         </v-btn>
+        <v-btn v-else icon @click="$router.go(-1)">
+          <v-icon>mdi-arrow-left</v-icon>
+        </v-btn>
+      </template>
+      <template #right-actions>
+<!--        <v-btn icon><v-icon>mdi-dots-vertical</v-icon></v-btn>-->
+        <drop-down-menu :list-items="['Delete Account']" />
+      </template>
+    </top-bar>
+    <v-row>
+      <v-card flat width="100%">
         <v-card-text>
           <div class="text-center mb-5">
             <v-hover #default="{ hover }">
-              <v-avatar size="100" class="white--text">
+              <v-avatar size="75" class="white--text" style="border: 2px solid green">
                 <app-loader v-if="loading" />
                 <v-img v-if="player.imgUrl && !loading" :src="player.imgUrl" alt="">
                   <v-expand-transition v-if="playerId === info.userId">
@@ -37,32 +40,49 @@
               accept="image/*"
               type="file"
               style="display: none" />
-            <div class="display-1 mt-2">{{ player.displayName }}</div>
-            <p v-if="playerId === info.userId">{{ player.email }}</p>
-            <v-expand-transition >
-              <div v-if="editing">
-                <div class="pa-3 primary lighten-5">
-                  <div class="headline">My info</div>
-                  <user-profile-form @onClose="editing = !editing" />
-                </div>
-              </div>
-            </v-expand-transition>
+            <div class="pa-3 mx-auto text-center">
+              <span>Hi, I'm {{ player.displayName}} and I like to to play soccer at {{ positions }} position(s).</span>
+            </div>
+            <div class="mt-2">
+              <v-btn v-if="playerId === info.userId" text color="primary" class="mb-3" @click="signOut">Sign out</v-btn>
+            </div>
             <v-divider></v-divider>
             <div class="mt-4 d-flex justify-center">
               <div>
+                <span class="headline"><strong>2</strong></span><br>
 <!--                <span class="headline"><strong>{{ goingGames.length }}</strong></span><br>-->
                 <span>Attended</span>
               </div>
               <div class="ml-5">
+                <span class="headline"><strong>3</strong></span><br>
 <!--                <span class="headline"><strong>{{ createdGames.length }}</strong></span><br>-->
                 <span>Organized</span>
               </div>
             </div>
           </div>
           <v-divider></v-divider>
-          <tabs v-if="games.length" :going-games="goingGames" :created-games="[]" :loading="loading" />
         </v-card-text>
+        <tabs :tab-items="['activities']">
+          <template #activities>
+            <game-list v-if="player.games.length" :games="player.games" />
+            <div v-else>You have no activities</div>
+          </template>
+        </tabs>
       </v-card>
+      <v-bottom-sheet v-model="sheet" persistent>
+        <v-sheet class="text-center">
+          <v-toolbar color="primary" dark>
+            <v-toolbar-title class="mx-auto">Edit my info</v-toolbar-title>
+          </v-toolbar>
+          <v-container>
+            <v-row>
+              <v-col cols="10" offset="1">
+                <user-profile-form @onClose="sheet = !sheet" @onUpdateInfo="updatePlayerInfo"/>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-sheet>
+      </v-bottom-sheet>
     </v-row>
   </v-col>
   <app-loader v-else />
@@ -72,7 +92,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import UserProfileForm from './Forms/UserProfileForm'
 import Tabs from './Tabs'
-import moment from 'moment'
+import GameList from '@/components/GameList'
 export default {
   name: 'PlayerProfile',
   props: {
@@ -80,38 +100,42 @@ export default {
       type: String
     }
   },
-  components: { UserProfileForm, Tabs },
+  components: { UserProfileForm, Tabs, GameList },
   data () {
     return {
       imgUrl: '',
-      editing: false
+      editing: false,
+      loading: false,
+      sheet: false,
+      player: null
     }
   },
   async mounted () {
-    if (!this.games.length) {
-      await this.$store.dispatch('fetchGames')
-    }
-    if (this.player == null) {
-      await this.$store.dispatch('fetchPlayers')
+    if (this.$route.params.id) {
+      this.loading = true
+      this.player = await this.$store.dispatch('fetchPlayerById', this.$route.params.id)
+      this.loading = false
+    } else {
+      this.loading = true
+      this.player = await this.$store.dispatch('fetchPlayerById', this.info.userId)
+      this.loading = false
     }
   },
   computed: {
-    ...mapGetters(['loading', 'error', 'playerById', 'info', 'goingGames', 'games']),
-    player () {
-      return this.playerId !== this.info.userId ? this.playerById(this.playerId) : this.info
-    },
-    // createdGames () {
-    //   return this.userGames.length
-    //     ? this.userGames.filter(g => g.creator.userId === this.info.userId)
-    //       .sort((a, b) => moment(`${b.date}${b.time}`, 'YYYY-MM-DD h:mma') - moment(`${a.date}${a.time}`, 'YYYY-MM-DD h:mma'))
-    //     : []
-    // },
+    ...mapGetters(['info']),
     // goingGames () {
-    //   return this.userGames.length ? this.userGames : []
-    // }
+    //   return Object.keys(this.player).length ? this.player.games.map(id => this.gameById(id)) : []
+    // },
+    positions () {
+      return this.player && this.player.positions ? this.player.positions.map(item => item).join(', ').toLowerCase() : 'any'
+    }
   },
   methods: {
     ...mapActions('snackbar', ['showSnack']),
+    async signOut () {
+      await this.$store.dispatch('signOut')
+      await this.$router.push('/signin')
+    },
     onPickFile () {
       this.$refs.fileInput.click()
     },
@@ -134,6 +158,11 @@ export default {
         color: 'primary',
         timeout: 3500
       })
+    },
+
+    async updatePlayerInfo () {
+      this.player = await this.$store.dispatch('fetchPlayerById', this.info.userId)
+      this.sheet = !this.sheet
     }
   }
 }

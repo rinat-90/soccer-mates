@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-card v-if="game != null" :to="isRouter">
+      <slot v-if="appBar" name="app-bar" :title="game.title" :is-creator="isCreator"></slot>
       <div v-if="type === 'small'">
         <slot
           name="organizer"
@@ -26,8 +27,8 @@
           name="gameDetails"
           :address="game.address"
           :skill="game.skillLevel"
-          :date="game.date"
-          :time="game.time" />
+          :end-time="game.endTime"
+          :start-time="game.startTime" />
       </v-card-text>
       <v-card-text v-if="type === 'large'">
         <slot
@@ -45,7 +46,6 @@
           :is-filled="isFilled"
           :is-finished="isFinished"
           :is-going="isGoing"
-          :loading="loading"
           :join="join"
           :quit="quit"/>
       </v-card-actions>
@@ -56,11 +56,12 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { gameMixin } from '@/mixins/gameMixin'
 export default {
   name: 'GameCard',
   props: {
-    gameId: {
-      type: String
+    game: {
+      type: Object
     },
     type: {
       type: String,
@@ -69,66 +70,34 @@ export default {
     gameOrganizer: {
       type: Boolean,
       default: true
+    },
+    appBar: {
+      type: Boolean,
+      default: false
+    }
+  },
+  mixins: [gameMixin],
+  data () {
+    return {
+      loading: false
     }
   },
   computed: {
-    ...mapGetters(['playerById', 'gameById', 'info', 'loading']),
-    game () {
-      return this.gameId ? this.gameById(this.gameId) : null
-    },
-    creator () {
-      return this.gameId && this.game != null ? this.playerById(this.game.creatorId) : null
-    },
-    roaster () {
-      return this.game != null ? this.game.roaster.map(id => this.playerById(id)) : []
-    },
-    gameImgUrl () {
-      return this.game != null ? this.game.imgUrl : ''
-    },
-    isGoing () {
-      return this.game && this.game.roaster.length ? !!this.game.roaster.find(id => id === this.info.userId) : false
-    },
-    isCreator () {
-      return this.game != null ? this.game.creatorId === this.info.userId : false
-    },
-    isCanceled () {
-      return this.game.status === 'canceled'
-    },
-    isFilled () {
-      return +this.game.spots - this.game.roaster.length === 0
-    },
-    isFinished () {
-      return this.game.status === 'finished'
-    },
-    isRouter () {
-      return this.type === 'small' ? `/game/${this.game.id}` : ''
-    },
-    spots () {
-      return !this.game.roaster.length
-        ? `${this.game.spots} spots left`
-        : this.isFilled
-          ? `${this.game.spots} going, All spots filled`
-          : `${this.game.roaster.length} going,  ${(+this.game.spots - this.game.roaster.length)} spots left`
-    },
-    subtitle () {
-      return this.type === 'small' ? this.spots : this.game.date
-    },
-    width () {
-      return window.innerWidth
-    },
-    size () {
-      return this.type === 'large'
-        ? this.width < 950 ? '200px' : '350px'
-        : '200px'
-    }
+    ...mapGetters(['info'])
   },
   methods: {
     ...mapActions('snackbar', ['showSnack']),
     async quit (id) {
+      this.loading = true
       await this.$store.dispatch('quit', id)
+      this.$emit('onQuit')
+      this.loading = false
     },
     async join (id) {
-      await this.$store.dispatch('join', id)
+      this.loading = true
+      const res = await this.$store.dispatch('join', id)
+      this.$emit('onJoin', res)
+      this.loading = false
     },
     async onFilePicked (e) {
       const files = e.target.files

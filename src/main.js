@@ -20,6 +20,7 @@ import GameThumbnail from './components/card-partials/GameThumbnail'
 import GameSubtitle from './components/card-partials/GameSubtitle'
 import GameDetails from './components/card-partials/GameDetails'
 import GameRoaster from './components/card-partials/GameRoaster'
+import DropDownMenu from '@/components/DropDownMenu'
 
 import { auth } from './firebase/firebaseInit'
 import './registerServiceWorker'
@@ -39,6 +40,7 @@ Vue.component('game-thumbnail', GameThumbnail)
 Vue.component('game-subtitle', GameSubtitle)
 Vue.component('game-details', GameDetails)
 Vue.component('game-roaster', GameRoaster)
+Vue.component('drop-down-menu', DropDownMenu)
 
 Vue.config.productionTip = false
 let app

@@ -1,15 +1,30 @@
 <template>
   <v-form v-model="valid" ref="form">
-    <v-text-field v-model="user.email" label="Email" :rules="rules.email" prepend-icon="mdi-account"></v-text-field>
-    <v-text-field v-model="user.password" type="password" label="Password" :rules="rules.password" prepend-icon="mdi-lock"></v-text-field>
-    <div class="d-flex">
-      <v-btn class="ml-8" :loading="loading" :disabled="!valid" color="primary" @click="signIn">Sign In</v-btn>
-      <v-spacer></v-spacer>
-      <v-btn icon color="primary">
-        <v-icon>mdi-google</v-icon>
+    <v-text-field
+      v-model="user.email"
+      :rules="rules.email"
+      label="Email"
+      append-icon="mdi-account"
+      filled>
+    </v-text-field>
+    <v-text-field
+      v-model="user.password"
+      :rules="rules.password"
+      type="password"
+      label="Password"
+      append-icon="mdi-lock"
+      filled>
+    </v-text-field>
+    <v-btn :loading="loading" :disabled="!valid" color="primary" @click="signIn" block large>Sign In</v-btn>
+    <div class="d-flex my-8 justify-space-around">
+      <v-btn color="#f1f1f1">
+        <v-icon left>mdi-google</v-icon>
+        Google
       </v-btn>
-      <v-btn icon color="primary">
+      <v-spacer></v-spacer>
+      <v-btn color="blue" dark>
         <v-icon>mdi-facebook</v-icon>
+        Facebook
       </v-btn>
     </div>
   </v-form>

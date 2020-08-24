@@ -1,11 +1,44 @@
 <template>
   <v-form v-model="valid" ref="form">
-    <v-text-field v-model="newUser.displayName" label="Display Name" :rules="rules.displayName" prepend-icon="mdi-account"></v-text-field>
-    <v-text-field v-model="newUser.email" label="Email" :rules="rules.email" prepend-icon="mdi-at"></v-text-field>
-    <v-text-field v-model="newUser.password" type="password" label="Password" :rules="rules.password" prepend-icon="mdi-lock"></v-text-field>
-    <v-text-field v-model="newUser.confirmedPassword" type="password" label="Confirm Password" :rules="rules.confirmPassword" prepend-icon="mdi-lock"></v-text-field>
-    <v-btn class="ml-8" :loading="loading" :disabled="!valid" color="primary" @click="register">Register</v-btn>
-    <div class="mt-4 text-center">Already have an account? <router-link to="/signin">Sign in</router-link> </div>
+    <v-text-field
+      v-model="newUser.displayName"
+      :rules="rules.displayName"
+      label="Display Name"
+      append-icon="mdi-account"
+      filled>
+    </v-text-field>
+    <v-text-field
+      v-model="newUser.email"
+      :rules="rules.email"
+      label="Email"
+      append-icon="mdi-at"
+      filled>
+    </v-text-field>
+    <v-text-field
+      v-model="newUser.password"
+      :rules="rules.password"
+      type="password"
+      label="Password"
+      append-icon="mdi-lock"
+      filled>
+    </v-text-field>
+    <v-text-field
+      v-model="newUser.confirmedPassword"
+      :rules="rules.confirmPassword"
+      type="password"
+      label="Confirm Password"
+      append-icon="mdi-lock"
+      filled>
+    </v-text-field>
+    <v-btn
+      @click="register"
+      :loading="loading"
+      :disabled="!valid"
+      color="primary"
+      block
+      large>
+      Register
+    </v-btn>
   </v-form>
 </template>
 

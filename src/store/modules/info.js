@@ -20,6 +20,9 @@ export default {
     },
     USER_QUIT_GAME (state, gameId) {
       state.info.games = state.info.games.filter(id => id !== gameId)
+    },
+    SET_USER_GAMES (state, payload) {
+      state.info.games = payload
     }
   },
   actions: {
@@ -35,6 +38,21 @@ export default {
       } catch (error) {
         commit(SET_LOADING, false)
         commit(SET_ERROR, error)
+        throw error
+      }
+    },
+    async fetchUserGames ({ commit, dispatch, getters }) {
+      // eslint-disable-next-line no-useless-catch
+      try {
+        const games = []
+        const gamesRef = db.collection('games')
+        const res = await gamesRef.where('id', 'in', [...getters.info.games]).get()
+        console.log(res.docs)
+        res.docs.forEach(snap => {
+          games.push(snap.data())
+        })
+        commit('SET_USER_GAMES', games)
+      } catch (error) {
         throw error
       }
     },
@@ -75,10 +93,8 @@ export default {
     info (state) {
       return state.info
     },
-    goingGames (state, getters) {
-      return state.info.games.map(id => {
-        return getters.gameById(id)
-      })
+    userGames (state) {
+      return state.info.games
     }
   }
 }

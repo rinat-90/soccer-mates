@@ -8,16 +8,19 @@
     <v-row v-if="filteredPlayers.length">
       <v-col cols="12" lg="10" offset-lg="1">
         <v-row>
-          <v-col cols="6" sm="6" md="4" lg="3" v-for="player in filteredPlayers" :key="player.id">
-            <v-card :to="info.userId !== player.id ? `/player/${player.id}` : `/profile`">
-              <v-card-text class="text-center">
-                <v-avatar size="100" class="mb-3">
-                  <v-img :src="player.imgUrl"></v-img>
-                </v-avatar>
-                <div class="text-center">{{ player.displayName }}</div>
-              </v-card-text>
-            </v-card>
-          </v-col>
+          <v-list width="100%">
+            <v-list-item
+              v-for="player in filteredPlayers"
+              :key="player.userId"
+              :to="info.userId !== player.userId ? `/player/${player.userId}` : `/profile`">
+              <v-list-item-avatar>
+                <v-img :src="player.imgUrl"></v-img>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title v-text="player.displayName"></v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
         </v-row>
       </v-col>
     </v-row>
@@ -37,11 +40,13 @@ export default {
   },
   data () {
     return {
-      searchVal: ''
+      searchVal: '',
+      loading: false,
+      players: []
     }
   },
   computed: {
-    ...mapGetters(['loading', 'error', 'players', 'info']),
+    ...mapGetters(['info']),
     filteredPlayers () {
       return this.players.length
         ? this.players.filter(player => {
@@ -51,9 +56,9 @@ export default {
     }
   },
   async mounted () {
-    if (!this.players.length) {
-      await this.$store.dispatch('fetchPlayers')
-    }
+    this.loading = true
+    this.players = await this.$store.dispatch('fetchPlayers')
+    this.loading = false
   }
 }
 </script>

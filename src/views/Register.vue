@@ -1,21 +1,30 @@
 <template>
-  <div class="d-flex justify-center" style="height: 100vh; opacity: .8">
-    <v-card width="450" class="align-self-center">
-      <div class="text-center mt-3">
-        <div>
-          <v-avatar tile size="70">
-            <img src="../assets/logo-icon.png" alt="">
-          </v-avatar>
-        </div>
-        <div>
-          <span class="display-1 font-weight-bold" style="color:green;">SOCCER MATES</span>
-        </div>
-      </div>
-      <v-card-text>
-        <register-form />
-      </v-card-text>
-    </v-card>
+  <div>
+    <top-bar title="CREATE ACCOUNT" with-actions>
+      <template #left-actions>
+        <v-btn icon to="/signin">
+          <v-icon>mdi-login-variant</v-icon>
+        </v-btn>
+      </template>
+      <template #right-actions>
+        <v-btn icon to="/register">
+          <v-icon>mdi-account-plus</v-icon>
+        </v-btn>
+      </template>
+    </top-bar>
+    <v-container>
+      <v-row>
+        <v-col cols="12">
+          <v-card flat class="align-self-center">
+            <v-card-text>
+              <register-form />
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
+
 </template>
 
 <script>

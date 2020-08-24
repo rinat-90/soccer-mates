@@ -1,14 +1,7 @@
 <template>
-  <div>
-    <top-bar :title="info.displayName" with-actions>
-      <template #right-actions>
-        <v-btn icon><v-icon>mdi-pencil</v-icon></v-btn>
-      </template>
-    </top-bar>
-    <v-row v-if="info.userId">
-      <player-profile :player-id="info.userId" />
-    </v-row>
-  </div>
+  <v-row v-if="userId">
+    <player-profile :player-id="userId" />
+  </v-row>
 </template>
 
 <script>
@@ -22,8 +15,8 @@ export default {
     }
   },
   computed: {
-    info () {
-      return this.$store.getters.info
+    userId () {
+      return this.$store.getters.info.userId
     }
   }
 }

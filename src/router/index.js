@@ -49,10 +49,22 @@ const routes = [
     component: () => import('../views/Profile.vue')
   },
   {
+    path: '/messages',
+    name: 'Messages',
+    meta: { layout: 'main', auth: true, bottomNav: true },
+    component: () => import('../views/Messages.vue')
+  },
+  {
     path: '/game/:id',
     name: 'Game',
     meta: { layout: 'main', auth: true, bottomNav: false },
     component: () => import('../views/Game.vue')
+  },
+  {
+    path: '/game/:id/edit',
+    name: 'Game Edit',
+    meta: { layout: 'main', auth: true, bottomNav: false },
+    component: () => import('../views/EditGame.vue')
   },
   {
     path: '/create-game',

@@ -1,7 +1,7 @@
 <template>
   <div>
     <app-toast />
-    <div ref="bg" class=""></div>
+<!--    <div ref="bg" class=""></div>-->
     <v-container class="pa-0">
       <router-view />
     </v-container>

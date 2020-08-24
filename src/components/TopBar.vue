@@ -4,11 +4,11 @@
     <div v-if="title && withActions" class="d-flex justify-space-between align-center" style="width: 100%;">
       <div class="">
         <v-btn v-if="withBackBtn" icon @click="$router.go(-1)">
-          <v-icon>mdi-chevron-left</v-icon>
+          <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
         <slot v-else name="left-actions"></slot>
       </div>
-      <div class="">
+      <div class="overflow-hidden">
         <v-toolbar-title>{{ title }}</v-toolbar-title>
       </div>
       <div class="">

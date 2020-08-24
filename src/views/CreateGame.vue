@@ -4,11 +4,7 @@
     </top-bar>
     <v-row>
       <v-col cols="12" lg="10" offset-lg="1">
-        <v-card>
-          <v-card-text>
-            <create-game-form type="new-game" />
-          </v-card-text>
-        </v-card>
+        <create-game-form type="new-game" />
       </v-col>
     </v-row>
   </div>

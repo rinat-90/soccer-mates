@@ -11,7 +11,7 @@
           <v-avatar left v-if="item.imgUrl">
             <v-img :src="item.imgUrl"></v-img>
           </v-avatar>
-          {{ $store.getters.info.userId === item.id ?  'You' : item.displayName }}
+          {{ $store.getters.info.userId === item.userId ?  'You' : item.displayName }}
         </v-chip>
       </v-slide-item>
     </v-slide-group>
