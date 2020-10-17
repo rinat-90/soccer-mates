@@ -11,16 +11,19 @@
     <v-row>
       <tabs :tab-items="['upcoming', 'past', 'hosting']" height="calc(100vh - 175px)">
         <template #upcoming>
-          <game-list v-if="goingGames.length" :games="goingGames" />
-          <app-loader v-else />
+          <app-skeleton-loader v-if="loading" :cols="12" :count="3" type-options="list-item-three-line" />
+          <div v-if="!loading && !goingGames.length">There are no games</div>
+          <game-list v-else :games="goingGames" />
         </template>
         <template #past>
-          <game-list v-if="pastGames.length" :games="pastGames" />
-          <app-loader v-else />
+          <app-skeleton-loader v-if="loading" :cols="12" :count="3" type-options="list-item-three-line" />
+          <div v-if="!loading && !pastGames.length">There are no games</div>
+          <game-list v-else :games="pastGames" />
         </template>
         <template #hosting>
-          <game-list v-if="hostingGames.length" :games="hostingGames" />
-          <app-loader v-else />
+          <app-skeleton-loader v-if="loading" :cols="12" :count="3" type-options="list-item-three-line" />
+          <div v-if="!loading && !hostingGames.length">There are no games</div>
+          <game-list v-else :games="hostingGames" />
         </template>
       </tabs>
     </v-row>
@@ -37,7 +40,8 @@ export default {
   data () {
     return {
       tab: null,
-      tabs: ['upcoming', 'past', 'hosting', 'loading'],
+      tabs: ['upcoming', 'past', 'hosting'],
+      loading: false,
       player: null,
       hostingGames: [],
       pastGames: [],
@@ -52,13 +56,15 @@ export default {
       await this.$store.dispatch('fetchInfo')
     }
     if (this.player === null) {
+      this.loading = true
       this.player = await this.$store.dispatch('fetchPlayerById', this.info.userId)
       this.hostingGames = await this.$store.dispatch('fetchHostingGames')
       this.pastGames = await this.$store.dispatch('fetchPastGames')
       this.goingGames = await this.$store.dispatch('fetchGoingGames')
+      setTimeout(() => {
+        this.loading = false
+      }, 0)
     }
-
-
   }
 }
 </script>

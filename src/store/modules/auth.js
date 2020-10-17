@@ -1,5 +1,5 @@
-import { auth, db } from '../../firebase/firebaseInit'
-import { CLEAR_ERROR, CLEAR_GAMES, SET_ERROR, SET_LOADING, CLEAR_INFO, CLEAR_PLAYERS } from '../types'
+import { auth, db } from '@/firebase/firebaseInit'
+import { CLEAR_ERROR, SET_ERROR, SET_LOADING, CLEAR_INFO } from '../types'
 export default {
   actions: {
     async register ({ commit, dispatch }, { email, password, displayName }) {
@@ -8,15 +8,11 @@ export default {
         commit(SET_LOADING, true)
         await auth.createUserWithEmailAndPassword(email, password)
         const uid = await dispatch('getUid')
-        // await firebase.database().ref(`/users/${uid}/info`).set({
-        //   email,
-        //   displayName,
-        //   imgUrl: ''
-        // })
         await db.collection('players').doc(uid).set({
           email,
           displayName,
-          imgUrl: ''
+          imgUrl: '',
+          userId: uid
         })
         commit(SET_LOADING, false)
       } catch (error) {
@@ -38,10 +34,9 @@ export default {
       }
     },
     async signOut ({ commit, dispatch }) {
+      await dispatch('unbindGames')
       await auth.signOut()
       commit(CLEAR_INFO)
-      commit(CLEAR_GAMES)
-      commit(CLEAR_PLAYERS)
     },
     async updateEmail ({ commit }, email) {
       try {

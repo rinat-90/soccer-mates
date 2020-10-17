@@ -4,7 +4,9 @@ import Vuex from 'vuex'
 import auth from './modules/auth'
 import info from './modules/info'
 import games from './modules/games'
+import games1 from './modules/games1'
 import players from './modules/players'
+import chats from '@/store/modules/chats'
 import snackbar from './modules/snackbar'
 import { CLEAR_ERROR, SET_ERROR, SET_LOADING } from './types'
 
@@ -41,6 +43,7 @@ export default new Vuex.Store({
     info,
     games,
     players,
+    chats,
     snackbar
   }
 })

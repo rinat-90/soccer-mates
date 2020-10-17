@@ -1,5 +1,5 @@
-import {CLEAR_ERROR, CLEAR_PLAYERS, SET_ERROR, SET_INFO, SET_LOADING, SET_PLAYERS} from '../types'
 import { db, auth } from '@/firebase/firebaseInit'
+
 export default {
   actions: {
     async fetchPlayers () {
@@ -20,7 +20,8 @@ export default {
       // eslint-disable-next-line no-useless-catch
       try {
         const player = ((await db.collection('players').doc(id).get()).data())
-        if (player.games.length) {
+        console.log(player)
+        if (player.games && player.games.length) {
           for (let i = 0; i < player.games.length; i++) {
             player.games[i] = ((await player.games[i].get()).data())
             player.games[i].creator = ((await player.games[i].creator.get()).data())

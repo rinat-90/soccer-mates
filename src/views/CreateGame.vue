@@ -1,6 +1,16 @@
 <template>
   <div>
-    <top-bar title="Create new game" with-actions with-back-btn>
+    <top-bar title="Create new game" with-actions>
+      <template #left-actions>
+        <v-btn icon @click="$router.go(-1)">
+          <v-icon>mdi-arrow-left</v-icon>
+        </v-btn>
+      </template>
+      <template #right-actions>
+        <v-btn icon>
+          <v-icon>mdi-dots-vertical</v-icon>
+        </v-btn>
+      </template>
     </top-bar>
     <v-row>
       <v-col cols="12" lg="10" offset-lg="1">

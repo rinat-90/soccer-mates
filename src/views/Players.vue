@@ -5,11 +5,13 @@
         <v-text-field v-model="searchVal" prepend-inner-icon="mdi-magnify" color="primary" placeholder="Search..."  class="mt-5" filled rounded dense ></v-text-field>
       </template>
     </top-bar>
-    <v-row v-if="filteredPlayers.length">
+    <v-row>
       <v-col cols="12" lg="10" offset-lg="1">
         <v-row>
           <v-list width="100%">
+            <app-skeleton-loader v-if="loading" :cols="12" :count="10" type-options="list-item-avatar" />
             <v-list-item
+              v-else
               v-for="player in filteredPlayers"
               :key="player.userId"
               :to="info.userId !== player.userId ? `/player/${player.userId}` : `/profile`">
@@ -24,7 +26,6 @@
         </v-row>
       </v-col>
     </v-row>
-    <app-loader v-else />
   </div>
 </template>
 
@@ -32,7 +33,7 @@
 import { mapGetters } from 'vuex'
 export default {
   name: 'Players',
-  components: {  },
+  components: { },
   metaInfo () {
     return {
       title: this.$title('Players')

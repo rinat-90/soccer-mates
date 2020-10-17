@@ -55,6 +55,12 @@ const routes = [
     component: () => import('../views/Messages.vue')
   },
   {
+    path: '/messages/chat/:id',
+    name: 'Chat',
+    meta: { layout: 'main', auth: true, bottomNav: false },
+    component: () => import('../views/Chat.vue')
+  },
+  {
     path: '/game/:id',
     name: 'Game',
     meta: { layout: 'main', auth: true, bottomNav: false },

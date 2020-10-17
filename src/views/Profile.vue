@@ -1,7 +1,5 @@
 <template>
-  <v-row v-if="userId">
-    <player-profile :player-id="userId" />
-  </v-row>
+  <player-profile :player-id="userId" />
 </template>
 
 <script>

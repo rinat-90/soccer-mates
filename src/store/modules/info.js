@@ -1,4 +1,4 @@
-import { db } from '../../firebase/firebaseInit'
+import { db } from '@/firebase/firebaseInit'
 import { uploadImage } from './util/helper'
 import { CLEAR_ERROR, CLEAR_INFO, SET_ERROR, SET_INFO, SET_LOADING, UPLOAD_INFO_PHOTO } from '../types'
 export default {
@@ -14,15 +14,6 @@ export default {
     },
     [UPLOAD_INFO_PHOTO] (state, payload) {
       state.info.imgUrl = payload
-    },
-    USER_JOIN_GAME (state, gameId) {
-      state.info.games.push(gameId)
-    },
-    USER_QUIT_GAME (state, gameId) {
-      state.info.games = state.info.games.filter(id => id !== gameId)
-    },
-    SET_USER_GAMES (state, payload) {
-      state.info.games = payload
     }
   },
   actions: {
@@ -72,19 +63,13 @@ export default {
       }
     },
     async uploadUserPhoto ({ commit, dispatch }, payload) {
+      // eslint-disable-next-line no-useless-catch
       try {
-        commit(CLEAR_ERROR)
-        commit(SET_LOADING, true)
         const uid = await dispatch('getUid')
         const playerRef = db.collection('players').doc(uid)
         const url = await uploadImage(payload, 'players', uid)
         await playerRef.update({ imgUrl: url })
-        await dispatch('fetchPlayers')
-        commit(UPLOAD_INFO_PHOTO, url)
-        commit(SET_LOADING, false)
       } catch (error) {
-        commit(SET_LOADING, false)
-        commit(SET_ERROR, error)
         throw error
       }
     }

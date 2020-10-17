@@ -1,6 +1,6 @@
 <template>
-  <v-col v-if="player" cols="12" lg="10" offset-lg="1">
-    <top-bar :title="player.displayName" with-actions>
+  <v-col cols="12" lg="10" offset-lg="1">
+    <app-header :title="displayName" :back="false">
       <template #left-actions>
         <v-btn icon v-if="$route.path === '/profile'"  @click="sheet = !sheet">
           <v-icon>mdi-pencil</v-icon>
@@ -10,18 +10,18 @@
         </v-btn>
       </template>
       <template #right-actions>
-<!--        <v-btn icon><v-icon>mdi-dots-vertical</v-icon></v-btn>-->
-        <drop-down-menu :list-items="['Delete Account']" />
+        <drop-down-menu :click-handler="dropDownClickHandler" :list-items="['Delete Account']" />
       </template>
-    </top-bar>
+    </app-header>
     <v-row>
       <v-card flat width="100%">
         <v-card-text>
           <div class="text-center mb-5">
-            <v-hover #default="{ hover }">
+            <v-skeleton-loader v-if="loading" width="100px" class="mx-auto text-center"  type="avatar" />
+            <v-hover v-else #default="{ hover }">
               <v-avatar size="75" class="white--text" style="border: 2px solid green">
                 <app-loader v-if="loading" />
-                <v-img v-if="player.imgUrl && !loading" :src="player.imgUrl" alt="">
+                <v-img v-else-if="!loading && player" :src="player.imgUrl" alt="">
                   <v-expand-transition v-if="playerId === info.userId">
                     <div
                       v-if="hover"
@@ -31,7 +31,9 @@
                     </div>
                   </v-expand-transition>
                 </v-img>
-                <v-btn @click="onPickFile" text  v-if="!player.imgUrl && !loading" color="primary darken-1">add photo</v-btn>
+                <v-btn v-else @click="onPickFile" color="primary darken-1" icon text>
+                  <v-icon>mdi-camera</v-icon>
+                </v-btn>
               </v-avatar>
             </v-hover>
             <input
@@ -41,22 +43,32 @@
               type="file"
               style="display: none" />
             <div class="pa-3 mx-auto text-center">
-              <span>Hi, I'm {{ player.displayName}} and I like to to play soccer at {{ positions }} position(s).</span>
+              <span v-if="!loading">Hi, I'm {{ displayName}} and I like to to play soccer at {{ positions }} position(s).</span>
+              <v-skeleton-loader v-else type="paragraph" />
             </div>
-            <div class="mt-2">
-              <v-btn v-if="playerId === info.userId" text color="primary" class="mb-3" @click="signOut">Sign out</v-btn>
+            <div class="mt-2 text-center">
+              <v-skeleton-loader v-if="loading" type="button" class="mx-auto mb-3" width="100px" />
+              <div v-else>
+                <v-btn v-if="playerId === info.userId" text color="primary" class="mb-3" @click="signOut">Sign out</v-btn>
+              </div>
             </div>
             <v-divider></v-divider>
             <div class="mt-4 d-flex justify-center">
               <div>
-                <span class="headline"><strong>2</strong></span><br>
-<!--                <span class="headline"><strong>{{ goingGames.length }}</strong></span><br>-->
-                <span>Attended</span>
+                <v-skeleton-loader class="mx-auto text-center" width="100px" v-if="loading" type="list-item-two-line" />
+                <div v-else>
+                  <span class="headline">
+                  <strong>2</strong>
+                </span><br>
+                  <span>Attended</span>
+                </div>
               </div>
               <div class="ml-5">
-                <span class="headline"><strong>3</strong></span><br>
-<!--                <span class="headline"><strong>{{ createdGames.length }}</strong></span><br>-->
-                <span>Organized</span>
+                <v-skeleton-loader class="mx-auto text-center" width="100px" v-if="loading" type="list-item-two-line" />
+                <div v-else>
+                  <span class="headline"><strong>3</strong></span><br>
+                  <span>Organized</span>
+                </div>
               </div>
             </div>
           </div>
@@ -64,8 +76,9 @@
         </v-card-text>
         <tabs :tab-items="['activities']">
           <template #activities>
-            <game-list v-if="player.games.length" :games="player.games" />
-            <div v-else>You have no activities</div>
+            <app-skeleton-loader v-if="loading" :count="3" type-options="list-item-three-line" />
+            <div v-if="!loading && !games.length">You have no activities</div>
+            <game-list v-else  :games="games" />
           </template>
         </tabs>
       </v-card>
@@ -85,7 +98,6 @@
       </v-bottom-sheet>
     </v-row>
   </v-col>
-  <app-loader v-else />
 </template>
 
 <script>
@@ -111,23 +123,23 @@ export default {
     }
   },
   async mounted () {
-    if (this.$route.params.id) {
-      this.loading = true
-      this.player = await this.$store.dispatch('fetchPlayerById', this.$route.params.id)
-      this.loading = false
-    } else {
-      this.loading = true
-      this.player = await this.$store.dispatch('fetchPlayerById', this.info.userId)
+    this.loading = true
+    if (this.playerId && !this.player) {
+      this.player = await this.$store.dispatch('fetchPlayerById', this.playerId)
       this.loading = false
     }
+    this.loading = false
   },
   computed: {
     ...mapGetters(['info']),
-    // goingGames () {
-    //   return Object.keys(this.player).length ? this.player.games.map(id => this.gameById(id)) : []
-    // },
     positions () {
       return this.player && this.player.positions ? this.player.positions.map(item => item).join(', ').toLowerCase() : 'any'
+    },
+    displayName () {
+      return this.player !== null ? this.player.displayName : ''
+    },
+    games () {
+      return this.player && this.player.games.length ? this.player.games : []
     }
   },
   methods: {
@@ -153,6 +165,7 @@ export default {
       fileReader.readAsDataURL(files[0])
       this.image = files[0]
       await this.$store.dispatch('uploadUserPhoto', this.image)
+      this.player = await this.$store.dispatch('fetchPlayerById', this.info.userId)
       await this.showSnack({
         text: 'Profile image successfully uploaded',
         color: 'primary',
@@ -163,6 +176,9 @@ export default {
     async updatePlayerInfo () {
       this.player = await this.$store.dispatch('fetchPlayerById', this.info.userId)
       this.sheet = !this.sheet
+    },
+    dropDownClickHandler (item) {
+      console.log(item)
     }
   }
 }

@@ -25,7 +25,7 @@ export const gameMixin = {
       return +this.game.spots - this.game.roaster.length === 0
     },
     isFinished () {
-      return this.game.status === 'finished'
+      return new Date(this.game.date) < Date.now()
     },
     isRouter () {
       return this.type === 'small' ? `/game/${this.game.id}` : ''

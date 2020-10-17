@@ -1,6 +1,6 @@
 <template>
   <v-menu offset-y>
-    <template v-slot:activator="{ on, attrs }">
+    <template v-slot:activator="{ on }">
       <v-btn icon v-on="on">
         <v-icon>mdi-dots-vertical</v-icon>
       </v-btn>
@@ -9,6 +9,7 @@
       <v-list-item
         v-for="(item, index) in listItems"
         :key="index"
+        @click="clickHandler(item)"
       >
         <v-list-item-title>{{ item }}</v-list-item-title>
       </v-list-item>
@@ -22,6 +23,9 @@ export default {
   props: {
     listItems: {
       type: Array
+    },
+    clickHandler: {
+      type: Function
     }
   }
 }

@@ -12,6 +12,7 @@
       class="green--text"
       v-for="(tab, i) in tabItems"
       :key="i"
+      :disabled="tab === 'chat' && !canChat"
       :href="`#tab-${i}`">
       {{ tab }}
     </v-tab>
@@ -39,6 +40,10 @@ export default {
     },
     height: {
       type: String
+    },
+    canChat: {
+      type: Boolean,
+      default: false
     }
   },
   data () {

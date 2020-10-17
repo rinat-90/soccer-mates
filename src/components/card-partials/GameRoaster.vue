@@ -5,12 +5,9 @@
         <v-chip
           pill
           class="mx-2"
-          :to="$store.getters.info.userId !== item.id ? `/player/${item.id}` : `/profile`"
-          :color="$store.getters.info.userId === item.id ?  'primary' : ''"
+          :to="getRoute(item.userId)"
         >
-          <v-avatar left v-if="item.imgUrl">
-            <v-img :src="item.imgUrl"></v-img>
-          </v-avatar>
+          <app-avatar left :img-url="item.imgUrl" />
           {{ $store.getters.info.userId === item.userId ?  'You' : item.displayName }}
         </v-chip>
       </v-slide-item>
@@ -26,9 +23,11 @@ export default {
       type: Array
     }
   },
-  data: () => ({
-    model: null
-  })
+  methods: {
+    getRoute (id) {
+      return this.$store.getters.info.userId !== id ? `/player/${id}` : '/profile'
+    }
+  }
 }
 </script>
 

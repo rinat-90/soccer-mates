@@ -24,7 +24,8 @@ export default {
   name: 'TopBar',
   props: {
     title: {
-      type: String
+      type: String,
+      default: ' '
     },
     withActions: {
       type: Boolean,

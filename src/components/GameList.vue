@@ -15,7 +15,7 @@
         <div class="pa-3">
           <span class="heading">{{ g.creator.displayName }}</span><br>
           <span class="subtitle-2">{{ g.title.toUpperCase() }}</span><br>
-          <span class="heading">{{ formatTime(g.time) }}</span>
+          <span class="heading">{{ formatTime(g.startTime) }}</span>
         </div>
       </v-card>
     </v-col>

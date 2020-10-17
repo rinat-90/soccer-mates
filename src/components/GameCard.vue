@@ -12,7 +12,7 @@
           name="image"
           :size="size"
           :is-creator="isCreator"
-          :on-file-picked="onFilePicked"
+          :on-file-picked-handler="onFilePicked"
           :imgUrl="gameImgUrl" />
       </div>
       <v-card-title>{{ game.title }}</v-card-title>
@@ -46,8 +46,8 @@
           :is-filled="isFilled"
           :is-finished="isFinished"
           :is-going="isGoing"
-          :join="join"
-          :quit="quit"/>
+          :join-handler="join"
+          :quit-handler="quit"/>
       </v-card-actions>
     </v-card>
     <app-loader v-else />
@@ -112,8 +112,8 @@ export default {
       })
       fileReader.readAsDataURL(files[0])
       this.image = files[0]
-      await this.$store.dispatch('updateGameImage', {
-        gameId: this.gameId,
+      this.game.imgUrl = await this.$store.dispatch('updateGameImage', {
+        gameId: this.game.id,
         image: this.image
       })
       await this.showSnack({

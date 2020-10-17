@@ -21,6 +21,9 @@ import GameSubtitle from './components/card-partials/GameSubtitle'
 import GameDetails from './components/card-partials/GameDetails'
 import GameRoaster from './components/card-partials/GameRoaster'
 import DropDownMenu from '@/components/DropDownMenu'
+import AppSkeletonLoader from '@/components/AppSkeletonLoader'
+import AppAvatar from '@/components/AppAvatar'
+import AppHeader from '@/components/AppHeader'
 
 import { auth } from './firebase/firebaseInit'
 import './registerServiceWorker'
@@ -41,6 +44,9 @@ Vue.component('game-subtitle', GameSubtitle)
 Vue.component('game-details', GameDetails)
 Vue.component('game-roaster', GameRoaster)
 Vue.component('drop-down-menu', DropDownMenu)
+Vue.component('app-skeleton-loader', AppSkeletonLoader)
+Vue.component('app-avatar', AppAvatar)
+Vue.component('app-header', AppHeader)
 
 Vue.config.productionTip = false
 let app

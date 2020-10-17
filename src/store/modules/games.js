@@ -15,10 +15,11 @@ export default {
         createdAt: Date.now(),
         ...rest
       }
-      const res = await gamesRef.add(gameData)
-      const url = await uploadImage(image, 'games', res.id)
-      await gamesRef.doc(res.id).update({ imgUrl: url, id: res.id })
-      return res.id
+      const { id } = await gamesRef.add(gameData)
+      const chatId = await dispatch('createGameChat', id)
+      const url = await uploadImage(image, 'games', id)
+      await gamesRef.doc(id).update({ imgUrl: url, id, chatId })
+      return id
     },
     async fetchGames ({ commit }) {
       const games = []
