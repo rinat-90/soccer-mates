@@ -2,12 +2,16 @@
   <div>
     <app-header :title="title" back>
       <template #right-actions>
-        <v-btn v-if="isCreator" :to="`/game/${game.id}/edit`" icon><v-icon>mdi-pencil</v-icon></v-btn>
-        <drop-down-menu v-else :list-items="['Report', 'Cancel']" />
+        <drop-down-menu
+          :is-creator="isCreator"
+          @clickItem="dropDownClickHandler"
+          :list-items="['Edit', 'Report']"
+          :disabled-items="['Edit', 'Cancel']"
+        />
       </template>
     </app-header>
-    <v-row>
-      <tabs :tab-items="['details', 'chat']" :can-chat="isGoing || isCreator" height="calc(100vh - 175px)">
+    <v-row height="calc(100vh - 175px)">
+      <tabs :tab-items="['details', 'chat']" :can-chat="isGoing || isCreator" height="80vh">
         <template #details>
           <app-skeleton-loader
             v-if="loading"
@@ -45,7 +49,7 @@
             </template>
 
             <template #gameActions="{ isGoing, isCanceled, isFinished, isFilled, joinHandler, quitHandler }">
-              <v-bottom-navigation app color="white" v-model="bottomNav" horizontal>
+              <v-bottom-navigation app color="white" v-model="bottomNav" horizontal grow>
                 <v-btn
                   v-if="!isGoing && !isFilled"
                   @click="joinHandler($route.params.id)"
@@ -100,7 +104,7 @@
 
 <script>
 import Tabs from '@/components/Tabs'
-import Chat from '@/views/Chat'
+import Chat from '@/components/Chat'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -124,6 +128,9 @@ export default {
     isGoing () {
       return this.game && this.game.roaster.length ? !!this.game.roaster.find(p => p.userId === this.info.userId) : false
     },
+    isFinished () {
+      return new Date(this.game.date) < Date.now()
+    },
     title () {
       return this.game != null ? this.game.title : ''
     }
@@ -134,6 +141,11 @@ export default {
     },
     removeHandler () {
       this.game.roaster = this.game.roaster.filter(p => p.userId !== this.info.userId)
+    },
+    dropDownClickHandler (item) {
+      if (item === 'Edit') {
+        this.$router.push(`/game/${this.game.id}/edit`)
+      }
     }
   },
   async mounted () {

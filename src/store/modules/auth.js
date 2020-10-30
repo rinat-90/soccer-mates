@@ -33,8 +33,7 @@ export default {
         throw error
       }
     },
-    async signOut ({ commit, dispatch }) {
-      await dispatch('unbindGames')
+    async signOut ({ commit }) {
       await auth.signOut()
       commit(CLEAR_INFO)
     },

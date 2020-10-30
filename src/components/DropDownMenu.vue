@@ -7,10 +7,10 @@
     </template>
     <v-list>
       <v-list-item
-        v-for="(item, index) in listItems"
-        :key="index"
-        @click="clickHandler(item)"
-      >
+        v-for="(item, index) in list"
+        :key="item"
+        :disabled="disabledItems.length && !!disabledItems[index] === item"
+        @click="$emit('clickItem', item)">
         <v-list-item-title>{{ item }}</v-list-item-title>
       </v-list-item>
     </v-list>
@@ -24,8 +24,18 @@ export default {
     listItems: {
       type: Array
     },
-    clickHandler: {
-      type: Function
+    disabledItems: {
+      type: Array
+    },
+    isCreator: {
+      type: Boolean
+    }
+  },
+  computed: {
+    list () {
+      return this.listItems.length && !this.isCreator
+        ? this.listItems.filter(item => item !== 'Edit')
+        : this.listItems
     }
   }
 }

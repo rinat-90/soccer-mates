@@ -9,11 +9,12 @@
     <v-tabs-slider></v-tabs-slider>
 
     <v-tab
-      class="green--text"
       v-for="(tab, i) in tabItems"
       :key="i"
       :disabled="tab === 'chat' && !canChat"
-      :href="`#tab-${i}`">
+      :href="`#tab-${i}`"
+      class="green--text"
+      >
       {{ tab }}
     </v-tab>
 

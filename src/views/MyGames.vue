@@ -1,15 +1,15 @@
 <template>
   <div>
-    <top-bar title="Activities" with-actions>
+    <app-header title="Activities" :back="false">
       <template #left-actions>
         <v-btn icon><v-icon>mdi-bell</v-icon></v-btn>
       </template>
       <template #right-actions>
         <v-btn icon to="/create-game"><v-icon>mdi-plus</v-icon></v-btn>
       </template>
-    </top-bar>
-    <v-row>
-      <tabs :tab-items="['upcoming', 'past', 'hosting']" height="calc(100vh - 175px)">
+    </app-header>
+    <v-row  height="calc(100vh - 175px)">
+      <tabs :tab-items="['upcoming', 'past', 'hosting']" height="calc(80vh)">
         <template #upcoming>
           <app-skeleton-loader v-if="loading" :cols="12" :count="3" type-options="list-item-three-line" />
           <div v-if="!loading && !goingGames.length">There are no games</div>

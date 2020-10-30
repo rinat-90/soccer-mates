@@ -185,7 +185,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
-import dateFilter from "@/filters/dateFilter";
+import dateFilter from '@/filters/dateFilter'
 export default {
   name: 'CreateGameForm',
   props: ['type', 'gameData'],

@@ -1,34 +1,39 @@
 <template>
   <div>
-    <top-bar title="Messages" />
+    <app-header title="Messages" :back="false">
+      <template #left-actions>
+        <v-btn icon to="/new-conversation">
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+      </template>
+      <template #right-actions>
+        <drop-down-menu
+          :list-items="['Report']"
+          :disabled-items="['']"
+        />
+      </template>
+    </app-header>
     <v-row>
       <v-col cols="12">
-        <v-list>
-          <v-list-item to="/messages/chat/1">
+        <app-skeleton-loader v-if="loading" :cols="12" :count="10" type-options="list-item-avatar-two-line" />
+        <div class="text-center" v-else-if="!loading && !messages.length">You have no messages</div>
+        <v-list v-else>
+          <v-list-item
+            v-for="msg in messages"
+            :key="msg.id"
+            :to="`/messages/chat/${msg.id}`">
             <v-list-item-avatar>
-              <v-img src="https://cdn.vuetifyjs.com/images/lists/2.jpg"></v-img>
+              <v-img :src="msg.imgUrl" />
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title v-text="'John Doe'"></v-list-item-title>
+              <v-list-item-title>some title</v-list-item-title>
               <v-list-item-subtitle>
-                <span class="mr-2">You:</span>
-                <span>Are you coming for a game?</span>
+                <span class="mr-2" v-if="msg.userId === info.userId">You:</span>
+                <span v-else class="mr-2">{{ msg.displayName }}:</span>
+                <span>{{ msg.text }}</span>
               </v-list-item-subtitle>
             </v-list-item-content>
-            <v-list-item-action-text v-text="'2:1PM'"></v-list-item-action-text>
-          </v-list-item>
-          <v-list-item to="/messages/chat/2">
-            <v-list-item-avatar>
-              <v-img src="https://cdn.vuetifyjs.com/images/lists/2.jpg"></v-img>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title v-text="'John Doe'"></v-list-item-title>
-              <v-list-item-subtitle>
-                <span class="mr-2">You:</span>
-                <span>Are you coming for a game?</span>
-              </v-list-item-subtitle>
-            </v-list-item-content>
-            <v-list-item-action-text v-text="'2:1PM'"></v-list-item-action-text>
+            <v-list-item-action-text>{{ msg.date }}</v-list-item-action-text>
           </v-list-item>
         </v-list>
       </v-col>
@@ -41,13 +46,20 @@ export default {
   name: 'Messages',
   data () {
     return {
-      messages: [
-        { id: '1', from: 'John', time: '14:44', text: 'Hey there' },
-        { id: '2', from: 'Mark', time: '14:45', text: 'Hey what\'s up?' },
-        { id: '3', from: 'John', time: '14:44', text: 'I\'m good! you?' },
-        { id: '4', from: 'Mark', time: '14:44', text: 'Awesome' }
-      ]
+      dialog: false,
+      loading: false,
+      messages: []
     }
+  },
+  computed: {
+    info () {
+      return this.$store.getters.info
+    }
+  },
+  async mounted () {
+    this.loading = true
+    this.messages = await this.$store.dispatch('getLastMsgFromChat')
+    this.loading = false
   }
 }
 </script>

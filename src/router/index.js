@@ -58,7 +58,7 @@ const routes = [
     path: '/messages/chat/:id',
     name: 'Chat',
     meta: { layout: 'main', auth: true, bottomNav: false },
-    component: () => import('../views/Chat.vue')
+    component: () => import('../components/Chat.vue')
   },
   {
     path: '/game/:id',
@@ -71,6 +71,12 @@ const routes = [
     name: 'Game Edit',
     meta: { layout: 'main', auth: true, bottomNav: false },
     component: () => import('../views/EditGame.vue')
+  },
+  {
+    path: '/new-conversation',
+    name: 'New Conversation',
+    meta: { layout: 'main', auth: true, bottomNav: false },
+    component: () => import('../views/NewConversation.vue')
   },
   {
     path: '/create-game',

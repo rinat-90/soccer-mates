@@ -1,6 +1,7 @@
 import { db } from '@/firebase/firebaseInit'
 import { uploadImage } from './util/helper'
 import { CLEAR_ERROR, CLEAR_INFO, SET_ERROR, SET_INFO, SET_LOADING, UPLOAD_INFO_PHOTO } from '../types'
+
 export default {
   state: {
     info: {}

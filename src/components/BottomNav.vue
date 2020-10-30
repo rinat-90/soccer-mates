@@ -5,8 +5,7 @@
     color="white"
     shift
     background-color="primary"
-  >
-
+    grow>
     <v-btn v-for="(l, i) in links" :key="i" :to="l.route">
       <span>{{ l.title }}</span>
       <v-icon color="#f1f1f1">{{ l.icon }}</v-icon>

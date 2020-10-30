@@ -25,12 +25,12 @@ export default {
       const games = []
       const date = moment().format('YYYY-MM-DD')
       const gamesRef = db.collection('games')
-      const rowGames = await gamesRef
+      const rawGames = await gamesRef
         .where('date', '>=', date)
         .orderBy('date', 'asc')
         .orderBy('startTime', 'asc').get()
 
-      rowGames.forEach(async snap => {
+      rawGames.forEach(async snap => {
         const game = snap.data()
         game.id = snap.id
         game.creator = ((await game.creator.get()).data())
@@ -57,7 +57,12 @@ export default {
       const uid = await dispatch('getUid')
       const playerRef = db.collection('players').doc(uid)
       const gameRef = db.collection('games').doc(gameId)
-      await playerRef.update({ games: firebase.firestore.FieldValue.arrayUnion(gameRef) })
+      const { chatId } = ((await gameRef.get()).data())
+      const chatRef = db.collection('chats').doc(chatId)
+      await playerRef.update({
+        games: firebase.firestore.FieldValue.arrayUnion(gameRef),
+        chats: firebase.firestore.FieldValue.arrayUnion(chatRef)
+      })
       await gameRef.update({ roaster: firebase.firestore.FieldValue.arrayUnion(playerRef) })
       return ((await playerRef.get()).data())
     },
@@ -65,7 +70,12 @@ export default {
       const uid = await dispatch('getUid')
       const playerRef = db.collection('players').doc(uid)
       const gameRef = db.collection('games').doc(gameId)
-      await playerRef.update({ games: firebase.firestore.FieldValue.arrayRemove(gameRef) })
+      const { chatId } = ((await gameRef.get()).data())
+      const chatRef = db.collection('chats').doc(chatId)
+      await playerRef.update({
+        games: firebase.firestore.FieldValue.arrayRemove(gameRef),
+        chats: firebase.firestore.FieldValue.arrayRemove(chatRef)
+      })
       await gameRef.update({ roaster: firebase.firestore.FieldValue.arrayRemove(playerRef) })
     },
     async updateGame ({ commit }, { id, ...rest }) {
@@ -114,13 +124,12 @@ export default {
           .where('date', '<', date)
           .orderBy('date', 'asc')
           .orderBy('startTime', 'asc').get()
-        gamesRaw.docs.forEach(async g => {
+        for (const g of gamesRaw.docs) {
           const game = g.data()
           game.creator = ((await game.creator.get()).data())
           game.id = g.id
           games.push(game)
-        })
-        console.log(games)
+        }
         return games
       } catch (error) {
         throw error
@@ -149,6 +158,6 @@ export default {
       } catch (error) {
         throw error
       }
-    },
+    }
   }
 }

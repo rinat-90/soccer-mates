@@ -10,7 +10,7 @@
         </div>
         <v-skeleton-loader v-else type="avatar" />
       </div>
-      <div class="overflow-hidden" style="min-width: 100px">
+      <div class="overflow-hidden text-center" style="min-width: 100px">
         <v-toolbar-title>
           <span v-if="title !== ''">{{ title }}</span>
           <v-skeleton-loader v-else type="text" width="100%"  />
@@ -43,6 +43,14 @@ export default {
   },
   methods: {
     goBack () {
+      this.$router.afterEach((to, from) => {
+        if (to.name === 'Game Edit') {
+          this.$router.push('/')
+        }
+        if (to.name === 'New Conversation') {
+          this.$router.push('/messages')
+        }
+      })
       this.$router.go(-1)
     }
   }

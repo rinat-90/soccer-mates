@@ -2,7 +2,15 @@
   <div>
     <top-bar with-component>
       <template #component>
-        <v-text-field v-model="searchVal" prepend-inner-icon="mdi-magnify" color="primary" placeholder="Search..."  class="mt-5" filled rounded dense ></v-text-field>
+        <v-text-field
+          v-model="searchVal"
+          prepend-inner-icon="mdi-magnify"
+          color="primary"
+          placeholder="Search..."
+          class="mt-5"
+          filled
+          rounded
+          dense />
       </template>
     </top-bar>
     <v-row>

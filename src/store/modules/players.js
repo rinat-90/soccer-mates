@@ -45,5 +45,19 @@ export default {
         throw error
       }
     },
+    async fetchPlayerName (c, payload) {
+      // eslint-disable-next-line no-useless-catch
+      try {
+        const players = []
+        const playersRef = db.collection('players')
+        const rowPlayers = await playersRef.where('displayName', '<=', payload).get()
+        rowPlayers.forEach(snap => {
+          players.push({ id: snap.id, ...snap.data() })
+        })
+        return players
+      } catch (error) {
+        throw error
+      }
+    }
   }
 }

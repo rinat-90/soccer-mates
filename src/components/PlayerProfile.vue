@@ -10,14 +10,14 @@
         </v-btn>
       </template>
       <template #right-actions>
-        <drop-down-menu :click-handler="dropDownClickHandler" :list-items="['Delete Account']" />
+        <drop-down-menu :click-handler="dropDownClickHandler" :list-items="['Change password','Delete Account']" :disabled-items="['']" />
       </template>
     </app-header>
     <v-row>
-      <v-card flat width="100%">
+      <v-card flat width="100%" height="calc(100vh - 170px)">
         <v-card-text>
           <div class="text-center mb-5">
-            <v-skeleton-loader v-if="loading" width="100px" class="mx-auto text-center"  type="avatar" />
+            <v-skeleton-loader v-if="loading" width="75px" class="mx-auto text-center"  type="avatar" />
             <v-hover v-else #default="{ hover }">
               <v-avatar size="75" class="white--text" style="border: 2px solid green">
                 <app-loader v-if="loading" />
@@ -47,7 +47,7 @@
               <v-skeleton-loader v-else type="paragraph" />
             </div>
             <div class="mt-2 text-center">
-              <v-skeleton-loader v-if="loading" type="button" class="mx-auto mb-3" width="100px" />
+              <v-skeleton-loader v-if="loading" type="button" class="mx-auto mb-3" width="75px" />
               <div v-else>
                 <v-btn v-if="playerId === info.userId" text color="primary" class="mb-3" @click="signOut">Sign out</v-btn>
               </div>
@@ -58,7 +58,7 @@
                 <v-skeleton-loader class="mx-auto text-center" width="100px" v-if="loading" type="list-item-two-line" />
                 <div v-else>
                   <span class="headline">
-                  <strong>2</strong>
+                  <strong>{{ games.length }}</strong>
                 </span><br>
                   <span>Attended</span>
                 </div>
@@ -66,7 +66,7 @@
               <div class="ml-5">
                 <v-skeleton-loader class="mx-auto text-center" width="100px" v-if="loading" type="list-item-two-line" />
                 <div v-else>
-                  <span class="headline"><strong>3</strong></span><br>
+                  <span class="headline"><strong>{{ organizedGamesCount }}</strong></span><br>
                   <span>Organized</span>
                 </div>
               </div>
@@ -74,10 +74,10 @@
           </div>
           <v-divider></v-divider>
         </v-card-text>
-        <tabs :tab-items="['activities']">
+        <tabs :tab-items="['activities']" :height="'50vh'" style="overflow-y: scroll">
           <template #activities>
-            <app-skeleton-loader v-if="loading" :count="3" type-options="list-item-three-line" />
-            <div v-if="!loading && !games.length">You have no activities</div>
+            <app-skeleton-loader v-if="loading" :count="3" :cols="12" type-options="list-item-three-line" />
+            <div v-if="!loading && !games.length" class="text-center">You have no activities</div>
             <game-list v-else  :games="games" />
           </template>
         </tabs>
@@ -124,7 +124,7 @@ export default {
   },
   async mounted () {
     this.loading = true
-    if (this.playerId && !this.player) {
+    if (this.playerId && this.player == null) {
       this.player = await this.$store.dispatch('fetchPlayerById', this.playerId)
       this.loading = false
     }
@@ -139,7 +139,12 @@ export default {
       return this.player !== null ? this.player.displayName : ''
     },
     games () {
-      return this.player && this.player.games.length ? this.player.games : []
+      return this.player && this.player.games ? this.player.games : []
+    },
+    organizedGamesCount () {
+      return this.player && this.player.games
+        ? this.player.games.filter(g => g.creator.userId === this.info.userId).length
+        : 0
     }
   },
   methods: {
